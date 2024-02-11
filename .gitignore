@@ -12,7 +12,8 @@ bin-release/
 *.air
 *.ipa
 *.apk
-bootstap/BizLand/BizLand
+bootstap
+bootstrap.html
 
 
 # Project files, i.e. `.project`, `.actionScriptProperties` and `.flexProperties`
