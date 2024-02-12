@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -32,7 +31,7 @@
     <title>User Login | EventiFy</title>
 </head>
 <body>
-
+    
     <!-- Main Container -->
     <div class="container d-flex justify-content-center align-items-center min-vh-100">
 
@@ -46,7 +45,7 @@
                         <h2>Hello</h2>
                         <p>We are happy you are back!</p>
                     </div>
-                    <form action="/login" method="POST">
+                    <form action="/userlog" method="POST">
                     {% include "message.html" %}
                     <div class="input-group mb-3">
                         <input type="text" name="email" class="form-control form-control-lg bg-light fs-6" placeholder="Email address" required>
@@ -57,9 +56,12 @@
                     <div class="input-group mb-3">
                         <button class="btn btn-lg btn-primary w-100 fs-6">Log In</button>
                     </div>
+                    <div class="input-group mb-3">
+                        <button type="button" class="btn btn-lg btn-secondary w-100 fs-6" onclick="window.location.href='/'">Cancel</button>
+                    </div>
                     </form>
                     <div class="row">
-                        <small>Don't have an account? <a href="signup">Sign Up</a></small>
+                        <small>Don't have an account? <a href="usersignup">Sign Up</a></small>
                     </div>
                 </div>
             </div> 

@@ -49,19 +49,32 @@
 
       <nav id="navbar" class="navbar">
         <ul>
-          <li><a class="nav-link scrollto active" href="#hero">Home</a></li>
+          <li><a class="nav-link scrollto active" href="#">Home</a></li>
           
           
           
           <li><a class="nav-link scrollto" href="#contact">Contact Us</a></li>
+          
+          {% if current_user.is_authenticated %}          
           <li class="dropdown"><a href=""><span>Login</span> <i class="bi bi-chevron-down"></i></a>
             <ul>
-              <li><a href="/login">User Login</a></li>
-              <li><a href="#">Admin Login</a></li>
+              <li><a href="">Welcome {{current_user.username}}!</a></li>
+              <li><a href="/logoutadmin">Logout</a></li>
               
             </ul>
           </li>
-          
+
+{% else %}
+          <li class="dropdown"><a href=""><span>Login</span> <i class="bi bi-chevron-down"></i></a>
+            <ul>
+              <li><a href="/userlog">User Login</a></li>
+              <li><a href="/adminlogin">Admin Login</a></li>
+              
+            </ul>
+          </li>
+                    
+{% endif  %}
+      
           
         </ul>
         <i class="bi bi-list mobile-nav-toggle"></i>
@@ -260,9 +273,9 @@
   </section>
   <!--End Contact Section-->
   
-  <main id="main">
+ 
   
-    {% block body %}{% endblock %}
+{% block body %}{% endblock %}
 
 
 <footer>
