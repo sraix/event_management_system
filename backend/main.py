@@ -1,4 +1,3 @@
-
 from flask import Flask, redirect, render_template, request, flash, session
 from flask_sqlalchemy import SQLAlchemy
 from flask.helpers import url_for
@@ -12,54 +11,42 @@ app = Flask(__name__)
 app.secret_key = "sraix"
 
 # this is for getting unique user access
-login_manager = LoginManager(app)
+login_manager = LoginManager()
+login_manager.init_app(app)
 login_manager.login_view = "login"
 
 #app.config
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://root:@localhost/ems'
 db = SQLAlchemy(app)
 
-
 @login_manager.user_loader
 def load_user(userid):
-    return users.query.get(userid)
+    return users.query.get(int(userid))
 
 @login_manager.user_loader
 def load_user(username):
     return admins.query.get(username)
 
-class Test(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(50))
-
+# users  table in the database
 class users(UserMixin, db.Model):
     userid = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(20))
     email = db.Column(db.String(20))
     password = db.Column(db.String(1000))
-
     def get_id(self):
         return str(self.userid)
-    
+
+# admin table to handle admin related tasks
 class admins(UserMixin, db.Model):
-    
     username = db.Column(db.String(20),primary_key=True)
     email=db.Column(db.String(20))
     password = db.Column(db.String(20))
-    
-
     def get_id(self):
         return str(self.username)
 
 @app.route("/")
 def home():
     return render_template("homepage.html")
-
-
-
-@app.route("/userlogin")
-def userlogin():
-    return render_template("userlogin.html")
 
 @app.route("/usersignup")
 def usersignup():
@@ -91,48 +78,60 @@ def signup():
         
     return render_template("usersignup.html")
 
+@app.before_request
+def before_request():
+    if 'logged_in' in session:
+        if session.get('user_type') == 'user':
+            user_record = users.query.filter_by(email=session['email']).first()
+            if user_record:
+                login_user(user_record)
+        elif session.get('user_type') == 'admin':
+            admin_record = admins.query.filter_by(email=session['email']).first()
+            if admin_record:
+                login_user(admin_record)
 
 #user login
-@app.route('/userlog', methods=["POST", "GET"])
-def userlog():
+@app.route('/userlogin', methods=["POST", "GET"])
+def userlogin():
+    error=None
     if request.method == "POST":
         email = request.form.get('email')
         password = request.form.get("password")
         user_record = users.query.filter_by(email=email).first()
-
         if user_record and check_password_hash(user_record.password, password):
             login_user(user_record)
-            flash("Login Success", "info")
+            session['logged_in'] = True
+            session['email'] = email
+            session['username'] = user_record.username
+            session['user_type'] = 'user'  # Set user type
             return redirect(url_for("user"))
-            
         else:
             flash("Invalid Credentials", "danger")
-            return render_template("userlogin.html")
-
-    return render_template("userlogin.html")
+            error = 'Invalid Credentials. Please try again.'
+    return render_template('userlogin.html', error=error)
 
 @app.route('/user')
-
 def user():
     if not session.get('logged_in'):
         return redirect(url_for('userlogin'))
     else:
-        return render_template('user.html')
+        return render_template("user.html")
 
 #admin login
-
-
 @app.route('/adminlogin', methods=['GET', 'POST'])
 def adminlogin():
     error = None
     if request.method == 'POST':
-        username = request.form.get('username')
+        email = request.form.get('email')
         password = request.form.get("password")
-        admin_record = admins.query.filter_by(username=username).first()
+        admin_record = admins.query.filter_by(email=email).first()
         admin_record1=admins.query.filter_by(password=password).first()
         if admin_record and admin_record1:
             login_user(admin_record)
             session['logged_in'] = True
+            session['email'] = email
+            session['username'] = admin_record.username
+            session['user_type'] = 'admin'  # Set user type
             return redirect(url_for("admin"))
         else:
             flash("Invalid Credentials", "danger")
@@ -140,7 +139,6 @@ def adminlogin():
     return render_template('adminlogin.html', error=error)
 
 @app.route('/admin')
-
 def admin():
     if not session.get('logged_in'):
         return redirect(url_for('adminlogin'))
@@ -148,17 +146,10 @@ def admin():
         return render_template('admin.html')
 
 @app.route('/logout')
-
 def logout():
     logout_user()
-    flash("Logout Successfull","warning")
     return redirect("/")
 
-@app.route('/logoutadmin')
-def logoutadmin():
-    logout_user()
-    flash("Admin, You are logged out!", "primary")
-    return redirect('/')
 
 @app.route('/adddata', methods=["POST", "GET"])
 def adddata():
@@ -170,17 +161,5 @@ def adddata():
         flash("Login and try again!","primary")
         return redirect("/admin")
 
-
-
-#testing db connected or not
-@app.route("/test")
-def test():
-    try:
-        a = Test.query.all()
-        print(a)
-        return 'MY DATABASE IS CONNECTED'
-    except Exception as e:
-        print(e)
-        return 'NOT CONNECTED'
 
 app.run(debug=True)
