@@ -13,7 +13,7 @@ app.secret_key = "sraix"
 # this is for getting unique user access
 login_manager = LoginManager()
 login_manager.init_app(app)
-login_manager.login_view = "login"
+login_manager.login_view = "userlogin"
 
 #app.config
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://root:@localhost/ems'
@@ -77,6 +77,14 @@ def signup():
         return render_template("userlogin.html")
         
     return render_template("usersignup.html")
+
+#clear cache
+@app.after_request
+def add_no_cache(response):
+    response.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
+    response.headers["Pragma"] = "no-cache"
+    response.headers["Expires"] = "0"
+    return response
 
 @app.before_request
 def before_request():
@@ -148,6 +156,7 @@ def admin():
 @app.route('/logout')
 def logout():
     logout_user()
+    session.clear()
     return redirect("/")
 
 
@@ -160,6 +169,41 @@ def adddata():
     else:
         flash("Login and try again!","primary")
         return redirect("/admin")
+
+#just testing
+
+
+#database intiating
+class events(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(100))
+    venue = db.Column(db.String(100))
+    date = db.Column(db.DateTime)
+    description = db.Column(db.String(1000))
+    ticketprice = db.Column(db.String(11))
+    type = db.Column(db.Integer)
+
+
+
+
+@app.route('/user/concerts')
+@login_required
+def concerts():
+    concerts = events.query.filter_by(type=1).all()
+    return render_template('concerts.html', events=concerts)
+
+@app.route('/user/festivals')
+@login_required
+def festivals():
+    festivals = events.query.filter_by(type=2).all()
+    return render_template('festivals.html', events=festivals)
+
+@app.route('/user/others')
+@login_required
+def others():
+    others = events.query.filter_by(type=3).all()
+    return render_template('others.html', events=others)
+
 
 
 app.run(debug=True)
