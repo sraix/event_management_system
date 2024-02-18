@@ -140,18 +140,18 @@ def adminlogin():
             session['email'] = email
             session['username'] = admin_record.username
             session['user_type'] = 'admin'  # Set user type
-            return redirect(url_for("admin"))
+            return redirect(url_for("index"))
         else:
             flash("Invalid Credentials", "danger")
             error = 'Invalid Credentials. Please try again.'
     return render_template('adminlogin.html', error=error)
 
-@app.route('/admin')
-def admin():
+@app.route('/index')
+def index():
     if not session.get('logged_in'):
         return redirect(url_for('adminlogin'))
     else:
-        return render_template('admin.html')
+        return render_template('index.html')
 
 @app.route('/logout')
 def logout():
@@ -201,8 +201,8 @@ def festivals():
 @app.route('/user/others')
 @login_required
 def others():
-    others = events.query.filter_by(type=3).all()
-    return render_template('others.html', events=others)
+   # others = events.query.filter_by(type=3).all()
+    return render_template('index.html')#events=others
 
 @app.route('/user/concerts/buy_ticket/<int:event_id>', methods=['POST'])
 @login_required
