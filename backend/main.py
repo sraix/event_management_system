@@ -204,6 +204,12 @@ def others():
     others = events.query.filter_by(type=3).all()
     return render_template('others.html', events=others)
 
-
+@app.route('/user/concerts/buy_ticket/<int:event_id>', methods=['POST'])
+@login_required
+def buy_ticket(event_id):
+    new_ticket = Ticket(event_id=event_id, user_id=current_user.id)
+    db.session.add(new_ticket)
+    db.session.commit()
+    return redirect(url_for('concerts'))
 
 app.run(debug=True)
