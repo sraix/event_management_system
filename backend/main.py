@@ -4,6 +4,8 @@ from flask.helpers import url_for
 from flask_login import UserMixin, login_required, logout_user, login_user, LoginManager, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
 from sqlalchemy import create_engine, text
+from datetime import datetime
+from flask import json
 
 # mydatabase connection
 local_server = True
@@ -16,8 +18,12 @@ login_manager.init_app(app)
 login_manager.login_view = "userlogin"
 
 #app.config
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://root:@localhost/ems'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://root:@localhost/testing'
 db = SQLAlchemy(app)
+
+#admin details
+with open('config.json','r') as c:
+    params=json.load(c)["params"]
 
 @login_manager.user_loader
 def load_user(userid):
@@ -25,7 +31,7 @@ def load_user(userid):
 
 @login_manager.user_loader
 def load_user(username):
-    return admins.query.get(username)
+    return params.get(username)
 
 # users  table in the database
 class users(UserMixin, db.Model):
@@ -35,14 +41,15 @@ class users(UserMixin, db.Model):
     password = db.Column(db.String(1000))
     def get_id(self):
         return str(self.userid)
+    
+class User(UserMixin):
+    def __init__(self, username, email, password):
+        self.username = username
+        self.email = email
+        self.password = password
 
-# admin table to handle admin related tasks
-class admins(UserMixin, db.Model):
-    username = db.Column(db.String(20),primary_key=True)
-    email=db.Column(db.String(20))
-    password = db.Column(db.String(20))
     def get_id(self):
-        return str(self.username)
+        return self.username
 
 @app.route("/")
 def home():
@@ -94,10 +101,10 @@ def before_request():
             if user_record:
                 login_user(user_record)
         elif session.get('user_type') == 'admin':
-            admin_record = admins.query.filter_by(email=session['email']).first()
-            if admin_record:
+            if params['email'] == session['email']:
+                # Create an admin object with the details from params
+                admin_record = User(params['username'], params['email'], params['password'])
                 login_user(admin_record)
-
 #user login
 @app.route('/userlogin', methods=["POST", "GET"])
 def userlogin():
@@ -132,14 +139,15 @@ def adminlogin():
     if request.method == 'POST':
         email = request.form.get('email')
         password = request.form.get("password")
-        admin_record = admins.query.filter_by(email=email).first()
-        admin_record1=admins.query.filter_by(password=password).first()
-        if admin_record and admin_record1:
+        
+        if(email==params['email'] and password==params['password']):
+            # Create an admin object with the details from params
+            admin_record = User(params['username'], params['email'], params['password'])
             login_user(admin_record)
             session['logged_in'] = True
             session['email'] = email
-            session['username'] = admin_record.username
-            session['user_type'] = 'admin'  # Set user type
+            session['username'] = params['username']
+            session['user_type'] = 'admin'   #Set user type to admin
             return redirect(url_for("index"))
         else:
             flash("Invalid Credentials", "danger")
@@ -160,49 +168,93 @@ def logout():
     return redirect("/")
 
 
-@app.route('/adddata', methods=["POST", "GET"])
-def adddata():
-    if('user' in session and session['username']==admins['username']):
-        if request.method == "POST":
-            pass
-        return render_template( 'adddata.html' )
-    else:
-        flash("Login and try again!","primary")
-        return redirect("/admin")
+
 
 #just testing
 
 
 #database intiating
-class events(db.Model):
+class event_categories(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(100))
-    venue = db.Column(db.String(100))
-    date = db.Column(db.DateTime)
+    category_name = db.Column(db.String(255), nullable=False)
+    description = db.Column(db.Text)
+
+class events(db.Model):
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    name = db.Column(db.String(100), nullable=False)
+    venue = db.Column(db.String(100), nullable=False)
+    date = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
     description = db.Column(db.String(1000))
     ticketprice = db.Column(db.String(11))
-    type = db.Column(db.Integer)
+    category_id = db.Column(db.Integer, db.ForeignKey('event_categories.id'), nullable=False)
+    available_tickets = db.Column(db.Integer, nullable=False)
+
+    category = db.relationship('event_categories', backref=db.backref('events', lazy=True))
+
+class bookings(db.Model):
+    booking_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.userid'), nullable=False)
+    event_id = db.Column(db.Integer, db.ForeignKey('events.id'), nullable=False)
+    booking_date = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
+    number_of_tickets = db.Column(db.Integer, nullable=False)
+    total_price = db.Column(db.Float, nullable=False)
+
+    user = db.relationship('users', backref=db.backref('bookings', lazy=True))
+    event = db.relationship('events', backref=db.backref('bookings', lazy=True))
 
 
+@app.route('/book_ticket/<int:event_id>', methods=['POST'])
+@login_required
+def book_ticket(event_id):
+    # Get the event and the number of tickets from the form data
+    event = events.query.get(event_id)
+    number_of_tickets = int(request.form.get('number_of_tickets'))
+
+    # Check if there are enough tickets available
+    if event.available_tickets >= number_of_tickets:
+        # Calculate the total price
+        total_price = event.ticketprice * number_of_tickets
+
+        # Create a new booking
+        booking = bookings(user_id=current_user.userid, event_id=event_id, booking_date=datetime.now(), number_of_tickets=number_of_tickets, total_price=total_price)
+
+        # Add the new booking to the database
+        db.session.add(booking)
+
+        # Update the number of available tickets
+        event.available_tickets -= number_of_tickets
+
+        # Commit the changes to the database
+        db.session.commit()
+
+        # Redirect the user to the events page
+        return redirect(url_for('user'))
+    else:
+        # If there are not enough tickets available, show an error message
+        return "Sorry, there are not enough tickets available for this event."
 
 
 @app.route('/user/concerts')
 @login_required
 def concerts():
-    concerts = events.query.filter_by(type=1).all()
-    return render_template('concerts.html', events=concerts)
+    # Assuming 'Concerts' category has id=1
+    concerts = events.query.filter_by(category_id=1).all()
+    return render_template('book.html', events=concerts)
+
 
 @app.route('/user/festivals')
 @login_required
 def festivals():
-    festivals = events.query.filter_by(type=2).all()
-    return render_template('festivals.html', events=festivals)
+    # Assuming 'Concerts' category has id=1
+    festivals = events.query.filter_by(category_id=2).all()
+    return render_template('book.html', events=festivals)
 
 @app.route('/user/others')
 @login_required
 def others():
-    others = events.query.filter_by(type=3).all()
-    return render_template('others.html',events=others)#
+    # Assuming 'Concerts' category has id=1
+    others = events.query.filter_by(category_id=3).all()
+    return render_template('book.html', events=others)
 
 
 
