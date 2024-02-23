@@ -188,6 +188,8 @@ class events(db.Model):
     ticketprice = db.Column(db.String(11))
     category_id = db.Column(db.Integer, db.ForeignKey('event_categories.id'), nullable=False)
     available_tickets = db.Column(db.Integer, nullable=False)
+    moredetails=db.Column(db.String(1000))
+    facilities=db.Column(db.String(1000))
 
     category = db.relationship('event_categories', backref=db.backref('events', lazy=True))
 
