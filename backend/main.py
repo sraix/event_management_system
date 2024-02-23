@@ -216,7 +216,7 @@ def book_ticket(event_id):
         total_price = event.ticketprice * number_of_tickets
 
         # Create a new booking
-        booking = bookings(user_id=current_user.id, event_id=event_id, booking_date=datetime.now(), number_of_tickets=number_of_tickets, total_price=total_price)
+        booking = bookings(user_id=current_user.userid, event_id=event_id, booking_date=datetime.now(), number_of_tickets=number_of_tickets, total_price=total_price)
 
         # Add the new booking to the database
         db.session.add(booking)
@@ -228,7 +228,7 @@ def book_ticket(event_id):
         db.session.commit()
 
         # Redirect the user to the events page
-        return redirect(url_for('events'))
+        return redirect(url_for('user'))
     else:
         # If there are not enough tickets available, show an error message
         return "Sorry, there are not enough tickets available for this event."
@@ -239,7 +239,7 @@ def book_ticket(event_id):
 def concerts():
     # Assuming 'Concerts' category has id=1
     concerts = events.query.filter_by(category_id=1).all()
-    return render_template('concerts.html', events=concerts)
+    return render_template('book.html', events=concerts)
 
 
 @app.route('/user/festivals')
@@ -247,7 +247,7 @@ def concerts():
 def festivals():
     # Assuming 'Concerts' category has id=1
     festivals = events.query.filter_by(category_id=2).all()
-    return render_template('festivals.html', events=festivals)
+    return render_template('book.html', events=festivals)
 
 @app.route('/user/others')
 @login_required
