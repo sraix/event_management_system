@@ -5,7 +5,7 @@
   <meta charset="utf-8">
   <meta content="width=device-width, initial-scale=1.0" name="viewport">
 
-  <title>{% block title  %}{% endblock %}</title>
+  <title>Admin-Eventify</title>
   <meta content="" name="description">
   <meta content="" name="keywords">
 
@@ -14,24 +14,25 @@
   <link href="static/assets/img/apple-touch-icon.png" rel="apple-touch-icon">
 
   <!-- Google Fonts -->
-  <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Raleway:300,300i,400,400i,500,500i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i" rel="stylesheet">
+  <link href="https://fonts.gstatic.com" rel="preconnect">
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Nunito:300,300i,400,400i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i" rel="stylesheet">
 
   <!-- Vendor CSS Files -->
-  <link href="static/assets/vendor/aos/aos.css" rel="stylesheet">
   <link href="static/assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
   <link href="static/assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
   <link href="static/assets/vendor/boxicons/css/boxicons.min.css" rel="stylesheet">
-  <link href="static/assets/vendor/glightbox/css/glightbox.min.css" rel="stylesheet">
+  <link href="static/assets/vendor/quill/quill.snow.css" rel="stylesheet">
+  <link href="static/assets/vendor/quill/quill.bubble.css" rel="stylesheet">
   <link href="static/assets/vendor/remixicon/remixicon.css" rel="stylesheet">
-  <link href="static/assets/vendor/swiper/swiper-bundle.min.css" rel="stylesheet">
+  <link href="static/assets/vendor/simple-datatables/style1.css" rel="stylesheet">
 
   <!-- Template Main CSS File -->
-  <link href="static/assets/css/style.css" rel="stylesheet">
+  <link href="static/assets/css/style1.css" rel="stylesheet">
 
   <!-- =======================================================
-  * Template Name: OnePage
+  * Template Name: NiceAdmin
   * Updated: Jan 29 2024 with Bootstrap v5.3.2
-  * Template URL: https://bootstrapmade.com/onepage-multipurpose-bootstrap-template/
+  * Template URL: https://bootstrapmade.com/nice-admin-bootstrap-admin-html-template/
   * Author: BootstrapMade.com
   * License: https://bootstrapmade.com/license/
   ======================================================== -->
@@ -40,277 +41,707 @@
 <body>
 
   <!-- ======= Header ======= -->
-  <header id="header" class="fixed-top">
-    <div class="container d-flex align-items-center justify-content-between">
+  <header id="header" class="header fixed-top d-flex align-items-center justify-content-between">
 
-      <h1 class="logo">EventiFy</h1>
-      <!-- Uncomment below if you prefer to use an image logo -->
-      <!-- <a href="index.html" class="logo"><img src="static/assets/img/logo.png" alt="" class="img-fluid"></a>-->
-
-      <nav id="navbar" class="navbar">
-        <ul>
-          <li><a class="nav-link scrollto active" href="#">Home</a></li>
-          
-          
-          
-          <li><a class="nav-link scrollto" href="#contact">Contact Us</a></li>
-          
-          {% if current_user.is_authenticated %}          
-          <li class="dropdown"><a href=""><span>Login</span> <i class="bi bi-chevron-down"></i></a>
-            <ul>
-              <li><a href="">Welcome {{current_user.username}}!</a></li>
-              <li><a href="/logout">Logout</a></li>
-              
-            </ul>
-          </li>
-
-{% else %}
-          <li class="dropdown"><a href=""><span>Login</span> <i class="bi bi-chevron-down"></i></a>
-            <ul>
-              <li><a href="/userlogin">User Login</a></li>
-              <li><a href="/adminlogin">Admin Login</a></li>
-              
-            </ul>
-          </li>
-                    
-{% endif  %}
-      
-          
-        </ul>
-        <i class="bi bi-list mobile-nav-toggle"></i>
-      </nav><!-- .navbar -->
-
-    </div>
-  </header><!-- End Header -->
-
-  <!-- ======= Hero Section ======= -->
-  
-  <section id="hero" class="d-flex align-items-center">
-    <div class="container position-relative" data-aos="fade-up" data-aos-delay="100">
-      <div class="row justify-content-center">
-        <div class="col-xl-7 col-lg-9 text-center">
-          <h1>Welcome to  EventiFy!</h1>
-          <h2>Your one stop shop for all your event needs.</h2>
-        </div>
-         
-      </div>
-      
-
-      <div class="row icon-boxes justify-content-center">
-        <div class="col-md-6 col-lg-3 d-flex align-items-stretch mb-5 mb-lg-0" data-aos="zoom-in" data-aos-delay="200">
-          <div class="icon-box">
-            <div class="icon"><i class="bx bx-calendar-event"></i></div>
-            <h2 class="nav-link scrollto"><a href="#events">Events</a></h2>
-            <p class="description">Explore different types of events</p>
-          </div>
-        </div>
-
-        <div class="col-md-6 col-lg-3 d-flex align-items-stretch mb-5 mb-lg-0" data-aos="zoom-in" data-aos-delay="300">
-          <div class="icon-box">
-            <div class="icon"><i class="bx bx-map-pin"></i></div>
-            <h2 class="nav-link scrollto"><a href="#venue">Venue</a></h2>
-            <p class="description">Explore all different venue options</p>
-          </div>
-        </div>
-
+    <div class="d-flex align-items-center">
+      <a href="#" class="logo d-flex align-items-center">
         
+        <span class="d-none d-lg-block">Admin</span>
+      </a>
+      <i class="bi bi-list toggle-sidebar-btn"></i>
+    </div><!-- End Logo -->
 
-      </div>
-    </div>
-  </section><!-- End Hero -->
- <!-- Events-->
-<section id="events" class="services section-bg">
-  <div class="container" data-aos="fade-up">
-
-    <div class="section-title">
-      <h2>Event</h2>
-      <p>Explore all the different Events!</p>
-    </div>
-
-    <div class="row">
-      <div class="col-lg-4 col-md-6 d-flex align-items-stretch" data-aos="zoom-in" data-aos-delay="100">
-        <div class="icon-box iconbox-blue">
-          <div class="icon">
-            <svg width="100" height="100" viewBox="0 0 600 600" xmlns="http://www.w3.org/2000/svg">
-              <path stroke="none" stroke-width="0" fill="#f5f5f5" d="M300,521.0016835830174C376.1290562159157,517.8887921683347,466.0731472004068,529.7835943286574,510.70327084640275,468.03025145048787C554.3714126377745,407.6079735673963,508.03601936045806,328.9844924480964,491.2728898941984,256.3432110539036C474.5976632858925,184.082847569629,479.9380746630129,96.60480741107993,416.23090153303,58.64404602377083C348.86323505073057,18.502131276798302,261.93793281208167,40.57373210992963,193.5410806939664,78.93577620505333C130.42746243093433,114.334589627462,98.30271207620316,179.96522072025542,76.75703585869454,249.04625023123273C51.97151888228291,328.5150500222984,13.704378332031375,421.85034740162234,66.52175969318436,486.19268352777647C119.04800174914682,550.1803526380478,217.28368757567262,524.383925680826,300,521.0016835830174"></path>
-            </svg>
-            <i class="bx bx-film"></i>
-          </div>
-          <h4><a href="">Cultural and Entertainment Events</a></h4>
-          <p>Explore all the cultural and entertainment events happening in our city</p>
-        </div>
-      </div>
-
-      <div class="col-lg-4 col-md-6 d-flex align-items-stretch mt-4 mt-md-0" data-aos="zoom-in" data-aos-delay="200">
-        <div class="icon-box iconbox-orange ">
-          <div class="icon">
-            <svg width="100" height="100" viewBox="0 0 600 600" xmlns="http://www.w3.org/2000/svg">
-              <path stroke="none" stroke-width="0" fill="#f5f5f5" d="M300,582.0697525312426C382.5290701553225,586.8405444964366,449.9789794690241,525.3245884688669,502.5850820975895,461.55621195738473C556.606425686781,396.0723002908107,615.8543463187945,314.28637112970534,586.6730223649479,234.56875336149918C558.9533121215079,158.8439757836574,454.9685369536778,164.00468322053177,381.49747125262974,130.76875717737553C312.15926192815925,99.40240125094834,248.97055460311594,18.661163978235184,179.8680185752513,50.54337015887873C110.5421016452524,82.52863877960104,119.82277516462835,180.83849132639028,109.12597500060166,256.43424936330496C100.08760227029461,320.3096726198365,92.17705696193138,384.0621239912766,124.79988738764834,439.7174275375508C164.83382741302287,508.01625554203684,220.96474134820875,577.5009287672846,300,582.0697525312426"></path>
-            </svg>
-            <i class="bx bx-music"></i>
-          </div>
-          <h4><a href="">Music Events</a></h4>
-          <p>Explore all the music concerts, festivals and other related events</p>
-        </div>
-      </div>
-
-      <div class="col-lg-4 col-md-6 d-flex align-items-stretch mt-4 mt-lg-0" data-aos="zoom-in" data-aos-delay="300">
-        <div class="icon-box iconbox-pink">
-          <div class="icon">
-            <svg width="100" height="100" viewBox="0 0 600 600" xmlns="http://www.w3.org/2000/svg">
-              <path stroke="none" stroke-width="0" fill="#f5f5f5" d="M300,541.5067337569781C382.14930387511276,545.0595476570109,479.8736841581634,548.3450877840088,526.4010558755058,480.5488172755941C571.5218469581645,414.80211281144784,517.5187510058486,332.0715597781072,496.52539010469104,255.14436215662573C477.37192572678356,184.95920475031193,473.57363656557914,105.61284051026155,413.0603344069578,65.22779650032875C343.27470386102294,18.654635553484475,251.2091493199835,5.337323636656869,175.0934190732945,40.62881213300186C97.87086631185822,76.43348514350839,51.98124368387456,156.15599469081315,36.44837278890362,239.84606092416172C21.716077023791087,319.22268207091537,43.775223500013084,401.1760424656574,96.891909868211,461.97329694683043C147.22146801428983,519.5804099606455,223.5754009179313,538.201503339737,300,541.5067337569781"></path>
-            </svg>
-            <i class="bx bx-menu-alt-left"></i>
-          </div>
-          <h4><a href="">Other Events</a></h4>
-          <p>Explore any type of event that is not listed above</p>
-        </div>
-      </div>
-
-      
-
-    </div>
-
-  </div>
-</section>
- <!--Venue-->
- <section id="venue" class="services section-bg">
-  <div class="container" data-aos="fade-up">
-
-    <div class="section-title">
-      <h2>Organize an Event</h2>
-      <p>Host an event at one of our venues</p>
-    </div>
-
-    <div class="row">
-      <div class="col-lg-4 col-md-6 d-flex align-items-stretch" data-aos="zoom-in" data-aos-delay="100">
-        <div class="icon-box iconbox-blue">
-          <div class="icon">
-            <svg width="100" height="100" viewBox="0 0 600 600" xmlns="http://www.w3.org/2000/svg">
-              <path stroke="none" stroke-width="0" fill="#f5f5f5" d="M300,521.0016835830174C376.1290562159157,517.8887921683347,466.0731472004068,529.7835943286574,510.70327084640275,468.03025145048787C554.3714126377745,407.6079735673963,508.03601936045806,328.9844924480964,491.2728898941984,256.3432110539036C474.5976632858925,184.082847569629,479.9380746630129,96.60480741107993,416.23090153303,58.64404602377083C348.86323505073057,18.502131276798302,261.93793281208167,40.57373210992963,193.5410806939664,78.93577620505333C130.42746243093433,114.334589627462,98.30271207620316,179.96522072025542,76.75703585869454,249.04625023123273C51.97151888228291,328.5150500222984,13.704378332031375,421.85034740162234,66.52175969318436,486.19268352777647C119.04800174914682,550.1803526380478,217.28368757567262,524.383925680826,300,521.0016835830174"></path>
-            </svg>
-            <i class="bx bx-book-open"></i>
-          </div>
-          <h4><a href="">Cultural and Entertainment Events</a></h4>
-          <p>Organize a event in one of our halls</p>
-        </div>
-      </div>
-
-      <div class="col-lg-4 col-md-6 d-flex align-items-stretch mt-4 mt-md-0" data-aos="zoom-in" data-aos-delay="200">
-        <div class="icon-box iconbox-orange ">
-          <div class="icon">
-            <svg width="100" height="100" viewBox="0 0 600 600" xmlns="http://www.w3.org/2000/svg">
-              <path stroke="none" stroke-width="0" fill="#f5f5f5" d="M300,582.0697525312426C382.5290701553225,586.8405444964366,449.9789794690241,525.3245884688669,502.5850820975895,461.55621195738473C556.606425686781,396.0723002908107,615.8543463187945,314.28637112970534,586.6730223649479,234.56875336149918C558.9533121215079,158.8439757836574,454.9685369536778,164.00468322053177,381.49747125262974,130.76875717737553C312.15926192815925,99.40240125094834,248.97055460311594,18.661163978235184,179.8680185752513,50.54337015887873C110.5421016452524,82.52863877960104,119.82277516462835,180.83849132639028,109.12597500060166,256.43424936330496C100.08760227029461,320.3096726198365,92.17705696193138,384.0621239912766,124.79988738764834,439.7174275375508C164.83382741302287,508.01625554203684,220.96474134820875,577.5009287672846,300,582.0697525312426"></path>
-            </svg>
-            <i class="bx bx-album"></i>
-
-          </div>
-          <h4><a href="">Music Events</a></h4>
-          <p>Organize a music or any related event in one of our venues</p>
-        </div>
-      </div>
-
-      <div class="col-lg-4 col-md-6 d-flex align-items-stretch mt-4 mt-lg-0" data-aos="zoom-in" data-aos-delay="300">
-        <div class="icon-box iconbox-pink">
-          <div class="icon">
-            <svg width="100" height="100" viewBox="0 0 600 600" xmlns="http://www.w3.org/2000/svg">
-              <path stroke="none" stroke-width="0" fill="#f5f5f5" d="M300,541.5067337569781C382.14930387511276,545.0595476570109,479.8736841581634,548.3450877840088,526.4010558755058,480.5488172755941C571.5218469581645,414.80211281144784,517.5187510058486,332.0715597781072,496.52539010469104,255.14436215662573C477.37192572678356,184.95920475031193,473.57363656557914,105.61284051026155,413.0603344069578,65.22779650032875C343.27470386102294,18.654635553484475,251.2091493199835,5.337323636656869,175.0934190732945,40.62881213300186C97.87086631185822,76.43348514350839,51.98124368387456,156.15599469081315,36.44837278890362,239.84606092416172C21.716077023791087,319.22268207091537,43.775223500013084,401.1760424656574,96.891909868211,461.97329694683043C147.22146801428983,519.5804099606455,223.5754009179313,538.201503339737,300,541.5067337569781"></path>
-            </svg>
-            <i class="bx bx-menu-alt-left"></i>
-
-          </div>
-          <h4><a href="">Other Events</a></h4>
-          <p>Organize any type of event that doesn't fit into the other categories</p>
-        </div>
-      </div>
-
-      
-
-    </div>
-
-  </div>
-</section>
-  <!-- ======= Contact Section ======= -->
-  <section id="contact" class="contact">
-    <div class="container" data-aos="fade-up">
-
-      <div class="section-title">
-        <h2>Contact</h2>
-        <p>If you have any suggestions, questions or need help with something specific, feel free to contact us.</p>
-      </div>
-
-      
-
-      <div class="row mt-5 justify-content-center">
-
-        <div class="col-lg-2">
-            <div class="info">
-    
-                <div class="email">
-                    <i class="bi bi-envelope"></i>
-                    <h4>Email:</h4>
-                    <p>eventify@gmail.com</p>
-                </div>
-    
-            </div>
-        </div>
-    
-        <div class="col-lg-2">
-            <div class="info">
-    
-                <div class="phone">
-                    <i class="bi bi-phone"></i>
-                    <h4>Call:</h4>
-                    <p>+91 8971196685</p>
-                    <p>+91 9400420321</p>
-                </div>
-    
-            </div>
-        </div>
-    
-    </div>
-        </div>
-  </section>
-  <!--End Contact Section-->
+    <nav class="d-flex align-items-center">
+      <ul class="navbar-nav flex-row">
+          <li class="nav-item dropdown pe-3">
+              <a class="nav-link nav-profile d-flex align-items-center pe-0" href="#" data-bs-toggle="dropdown">
+                  <i class="bi-person-circle"></i>
+                  <span class="d-none d-md-block dropdown-toggle ps-2">{{current_user.username}}</span>
+              </a><!-- End Profile Image Icon -->
   
- 
+              <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow profile">
+                  <li class="dropdown-header">
+                      <h6>{{current_user.username}}</h6>
+                  </li>
+                  <li>
+                      <a class="dropdown-item d-flex align-items-center justify-content-center" href="/logout">
+                          <span>Sign Out</span>
+                      </a>
+                  </li>
+              </ul><!-- End Profile Dropdown Items -->
+          </li><!-- End Profile Nav -->
+      </ul>
+  </nav><!-- End Icons Navigation -->
   
-{% block body %}{% endblock %}
 
+</header>
 
-<footer>
-    <div class="container d-md-flex py-4">
+  <!-- ======= Sidebar ======= -->
+  <aside id="sidebar" class="sidebar">
 
-      <div class="me-md-auto text-center text-md-start">
-        <div class="copyright">
-          &copy; Copyright <strong><span>EventiFy</span></strong>. All Rights Reserved
-        </div>
-        <div class="credits">
-          <!-- All the links in the footer should remain intact. -->
-          <!-- You can delete the links only if you purchased the pro version. -->
-          <!-- Licensing information: https://bootstrapmade.com/license/ -->
-          <!-- Purchase the pro version with working PHP/AJAX contact form: https://bootstrapmade.com/onepage-multipurpose-bootstrap-template/ -->
-          Designed by teamx</a>
-        </div>
-      </div>
+    <ul class="sidebar-nav" id="sidebar-nav">
+
+      <li class="nav-item">
+        <a class="nav-link " href="#">
+          <i class="bi bi-grid"></i>
+          <span>Dashboard</span>
+        </a>
+      </li><!-- End Dashboard Nav -->
       
+     <!-- End Components Nav -->
+
+     <li class="nav-item">
+      <a class="nav-link collapsed" data-bs-target="#forms-nav" data-bs-toggle="collapse" href="#">
+        <i class="bi bi-journal-text"></i><span>Events</span><i class="bi bi-chevron-down ms-auto"></i>
+      </a>
+      <ul id="forms-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
+        <li>
+          <a href="forms-elements.html">
+            <i class="bi bi-circle"></i><span>Concerts</span>
+          </a>
+        </li>
+        <li>
+          <a href="forms-layouts.html">
+            <i class="bi bi-circle"></i><span>Festivals</span>
+          </a>
+        </li>
+        <li>
+          <a href="forms-editors.html">
+            <i class="bi bi-circle"></i><span>Others</span>
+          </a>
+        </li>
+      </ul>
+    </li><!-- End Forms Nav -->
+    
+
+      
+
+      
+
+    <li class="nav-item">
+      <a class="nav-link collapsed" data-bs-target="#forms-nav1" data-bs-toggle="collapse" href="#">
+        <i class="bi bi-bar-chart"></i><span>Booked Ticekts</span><i class="bi bi-chevron-down ms-auto"></i>
+      </a>
+      <ul id="forms-nav1" class="nav-content collapse " data-bs-parent="#sidebar-nav">
+        <li>
+          <a href="forms-elements.html">
+            <i class="bi bi-circle"></i><span>Concerts</span>
+          </a>
+        </li>
+        <li>
+          <a href="forms-layouts.html">
+            <i class="bi bi-circle"></i><span>Festivals</span>
+          </a>
+        </li>
+        <li>
+          <a href="forms-editors.html">
+            <i class="bi bi-circle"></i><span>Others</span>
+          </a>
+        </li>
+      </ul>
+    </li><!-- End Forms Nav -->
+    
+
+      
+
+      <li class="nav-heading">Pages</li>
+
+      <li class="nav-item">
+        <a class="nav-link collapsed" href="users-profile.html">
+          <i class="bi bi-person"></i>
+          <span>Profile</span>
+        </a>
+      </li><!-- End Profile Page Nav -->
+
+      <li class="nav-item">
+        <a class="nav-link collapsed" href="pages-faq.html">
+          <i class="bi bi-question-circle"></i>
+          <span>F.A.Q</span>
+        </a>
+      </li><!-- End F.A.Q Page Nav -->
+
+      <li class="nav-item">
+        <a class="nav-link collapsed" href="pages-contact.html">
+          <i class="bi bi-envelope"></i>
+          <span>Contact</span>
+        </a>
+      </li><!-- End Contact Page Nav -->
+
+      <li class="nav-item">
+        <a class="nav-link collapsed" href="pages-register.html">
+          <i class="bi bi-card-list"></i>
+          <span>Register</span>
+        </a>
+      </li><!-- End Register Page Nav -->
+
+      <li class="nav-item">
+        <a class="nav-link collapsed" href="pages-login.html">
+          <i class="bi bi-box-arrow-in-right"></i>
+          <span>Login</span>
+        </a>
+      </li><!-- End Login Page Nav -->
+
+      <li class="nav-item">
+        <a class="nav-link collapsed" href="pages-error-404.html">
+          <i class="bi bi-dash-circle"></i>
+          <span>Error 404</span>
+        </a>
+      </li><!-- End Error 404 Page Nav -->
+
+      <li class="nav-item">
+        <a class="nav-link collapsed" href="pages-blank.html">
+          <i class="bi bi-file-earmark"></i>
+          <span>Blank</span>
+        </a>
+      </li><!-- End Blank Page Nav -->
+
+    </ul>
+
+  </aside><!-- End Sidebar-->
+
+  <main id="main" class="main">
+
+    <div class="pagetitle">
+      <h1>Dashboard</h1>
+      <nav>
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item"><a href="index.html">Home</a></li>
+          <li class="breadcrumb-item active">Dashboard</li>
+        </ol>
+      </nav>
+    </div><!-- End Page Title -->
+
+    <section class="section dashboard">
+      <div class="row">
+
+        <!-- Left side columns -->
+        <div class="col-lg-8">
+          <div class="row">
+
+            <!-- Sales Card -->
+            <div class="col-xxl-4 col-md-6">
+              <div class="card info-card sales-card">
+
+                <div class="filter">
+                  <a class="icon" href="#" data-bs-toggle="dropdown"><i class="bi bi-three-dots"></i></a>
+                  <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
+                    <li class="dropdown-header text-start">
+                      <h6>Filter</h6>
+                    </li>
+
+                    <li><a class="dropdown-item" href="#">Today</a></li>
+                    <li><a class="dropdown-item" href="#">This Month</a></li>
+                    <li><a class="dropdown-item" href="#">This Year</a></li>
+                  </ul>
+                </div>
+
+                <div class="card-body">
+                  <h5 class="card-title">Ticket Booked <span>| Today</span></h5>
+
+                  <div class="d-flex align-items-center">
+                    <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
+                      <i class="bi bi-cart"></i>
+                    </div>
+                    <div class="ps-3">
+                      <h6>145</h6>
+
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+            </div><!-- End Sales Card -->
+
+            <!-- Revenue Card -->
+            <div class="col-xxl-4 col-md-6">
+              <div class="card info-card revenue-card">
+
+                <div class="filter">
+                  <a class="icon" href="#" data-bs-toggle="dropdown"><i class="bi bi-three-dots"></i></a>
+                  <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
+                    <li class="dropdown-header text-start">
+                      <h6>Filter</h6>
+                    </li>
+
+                    <li><a class="dropdown-item" href="#">Today</a></li>
+                    <li><a class="dropdown-item" href="#">This Month</a></li>
+                    <li><a class="dropdown-item" href="#">This Year</a></li>
+                  </ul>
+                </div>
+
+                <div class="card-body">
+                  <h5 class="card-title">Revenue <span>| This Month</span></h5>
+
+                  <div class="d-flex align-items-center">
+                    <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
+                      <i class="bi bi-currency-dollar"></i>
+                    </div>
+                    <div class="ps-3">
+                      <h6>$3,264</h6>
+                      
+
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+            </div><!-- End Revenue Card -->
+
+            <!-- Customers Card -->
+            <div class="col-xxl-4 col-xl-12">
+
+              <div class="card info-card customers-card">
+
+                <div class="filter">
+                  <a class="icon" href="#" data-bs-toggle="dropdown"><i class="bi bi-three-dots"></i></a>
+                  <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
+                    <li class="dropdown-header text-start">
+                      <h6>Filter</h6>
+                    </li>
+
+                    <li><a class="dropdown-item" href="#">Today</a></li>
+                    <li><a class="dropdown-item" href="#">This Month</a></li>
+                    <li><a class="dropdown-item" href="#">This Year</a></li>
+                  </ul>
+                </div>
+
+                <div class="card-body">
+                  <h5 class="card-title">Users <span>| This Year</span></h5>
+
+                  <div class="d-flex align-items-center">
+                    <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
+                      <i class="bi bi-people"></i>
+                    </div>
+                    <div class="ps-3">
+                      <h6>1244</h6>
+
+                    </div>
+                  </div>
+
+                </div>
+              </div>
+
+            </div><!-- End Customers Card -->
+
+            <!-- Reports -->
+            
+
+            <!-- Recent Sales -->
+            <div class="col-12">
+              <div class="card recent-sales overflow-auto">
+
+                <div class="filter">
+                  <a class="icon" href="#" data-bs-toggle="dropdown"><i class="bi bi-three-dots"></i></a>
+                  <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
+                    <li class="dropdown-header text-start">
+                      <h6>Filter</h6>
+                    </li>
+
+                    <li><a class="dropdown-item" href="#">Today</a></li>
+                    <li><a class="dropdown-item" href="#">This Month</a></li>
+                    <li><a class="dropdown-item" href="#">This Year</a></li>
+                  </ul>
+                </div>
+
+                <div class="card-body">
+                  <h5 class="card-title">Recent Sales <span>| Today</span></h5>
+
+                  <table class="table table-borderless datatable">
+                    <thead>
+                      <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">Customer</th>
+                        <th scope="col">Product</th>
+                        <th scope="col">Price</th>
+                        <th scope="col">Status</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <th scope="row"><a href="#">#2457</a></th>
+                        <td>Brandon Jacob</td>
+                        <td><a href="#" class="text-primary">At praesentium minu</a></td>
+                        <td>$64</td>
+                        <td><span class="badge bg-success">Approved</span></td>
+                      </tr>
+                      <tr>
+                        <th scope="row"><a href="#">#2147</a></th>
+                        <td>Bridie Kessler</td>
+                        <td><a href="#" class="text-primary">Blanditiis dolor omnis similique</a></td>
+                        <td>$47</td>
+                        <td><span class="badge bg-warning">Pending</span></td>
+                      </tr>
+                      <tr>
+                        <th scope="row"><a href="#">#2049</a></th>
+                        <td>Ashleigh Langosh</td>
+                        <td><a href="#" class="text-primary">At recusandae consectetur</a></td>
+                        <td>$147</td>
+                        <td><span class="badge bg-success">Approved</span></td>
+                      </tr>
+                      <tr>
+                        <th scope="row"><a href="#">#2644</a></th>
+                        <td>Angus Grady</td>
+                        <td><a href="#" class="text-primar">Ut voluptatem id earum et</a></td>
+                        <td>$67</td>
+                        <td><span class="badge bg-danger">Rejected</span></td>
+                      </tr>
+                      <tr>
+                        <th scope="row"><a href="#">#2644</a></th>
+                        <td>Raheem Lehner</td>
+                        <td><a href="#" class="text-primary">Sunt similique distinctio</a></td>
+                        <td>$165</td>
+                        <td><span class="badge bg-success">Approved</span></td>
+                      </tr>
+                    </tbody>
+                  </table>
+
+                </div>
+
+              </div>
+            </div><!-- End Recent Sales -->
+
+            <!-- Top Selling -->
+            <div class="col-12">
+              <div class="card top-selling overflow-auto">
+
+                <div class="filter">
+                  <a class="icon" href="#" data-bs-toggle="dropdown"><i class="bi bi-three-dots"></i></a>
+                  <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
+                    <li class="dropdown-header text-start">
+                      <h6>Filter</h6>
+                    </li>
+
+                    <li><a class="dropdown-item" href="#">Today</a></li>
+                    <li><a class="dropdown-item" href="#">This Month</a></li>
+                    <li><a class="dropdown-item" href="#">This Year</a></li>
+                  </ul>
+                </div>
+
+                <div class="card-body pb-0">
+                  <h5 class="card-title">Top Selling <span>| Today</span></h5>
+
+                  <table class="table table-borderless">
+                    <thead>
+                      <tr>
+                        <th scope="col">Preview</th>
+                        <th scope="col">Product</th>
+                        <th scope="col">Price</th>
+                        <th scope="col">Sold</th>
+                        <th scope="col">Revenue</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <th scope="row"><a href="#"><img src="static/assets/img/product-1.jpg" alt=""></a></th>
+                        <td><a href="#" class="text-primary fw-bold">Ut inventore ipsa voluptas nulla</a></td>
+                        <td>$64</td>
+                        <td class="fw-bold">124</td>
+                        <td>$5,828</td>
+                      </tr>
+                      <tr>
+                        <th scope="row"><a href="#"><img src="static/assets/img/product-2.jpg" alt=""></a></th>
+                        <td><a href="#" class="text-primary fw-bold">Exercitationem similique doloremque</a></td>
+                        <td>$46</td>
+                        <td class="fw-bold">98</td>
+                        <td>$4,508</td>
+                      </tr>
+                      <tr>
+                        <th scope="row"><a href="#"><img src="static/assets/img/product-3.jpg" alt=""></a></th>
+                        <td><a href="#" class="text-primary fw-bold">Doloribus nisi exercitationem</a></td>
+                        <td>$59</td>
+                        <td class="fw-bold">74</td>
+                        <td>$4,366</td>
+                      </tr>
+                      <tr>
+                        <th scope="row"><a href="#"><img src="static/assets/img/product-4.jpg" alt=""></a></th>
+                        <td><a href="#" class="text-primary fw-bold">Officiis quaerat sint rerum error</a></td>
+                        <td>$32</td>
+                        <td class="fw-bold">63</td>
+                        <td>$2,016</td>
+                      </tr>
+                      <tr>
+                        <th scope="row"><a href="#"><img src="static/assets/img/product-5.jpg" alt=""></a></th>
+                        <td><a href="#" class="text-primary fw-bold">Sit unde debitis delectus repellendus</a></td>
+                        <td>$79</td>
+                        <td class="fw-bold">41</td>
+                        <td>$3,239</td>
+                      </tr>
+                    </tbody>
+                  </table>
+
+                </div>
+
+              </div>
+            </div><!-- End Top Selling -->
+
+          </div>
+        </div><!-- End Left side columns -->
+
+        <!-- Right side columns -->
+        <div class="col-lg-4">
+
+          <!-- Recent Activity -->
+          <div class="card">
+            <div class="filter">
+              <a class="icon" href="#" data-bs-toggle="dropdown"><i class="bi bi-three-dots"></i></a>
+              <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
+                <li class="dropdown-header text-start">
+                  <h6>Filter</h6>
+                </li>
+
+                <li><a class="dropdown-item" href="#">Today</a></li>
+                <li><a class="dropdown-item" href="#">This Month</a></li>
+                <li><a class="dropdown-item" href="#">This Year</a></li>
+              </ul>
+            </div>
+
+            <div class="card-body">
+              <h5 class="card-title">Recent Activity <span>| Today</span></h5>
+
+              <div class="activity">
+
+                <div class="activity-item d-flex">
+                  <div class="activite-label">32 min</div>
+                  <i class='bi bi-circle-fill activity-badge text-success align-self-start'></i>
+                  <div class="activity-content">
+                    Quia quae rerum <a href="#" class="fw-bold text-dark">explicabo officiis</a> beatae
+                  </div>
+                </div><!-- End activity item-->
+
+                <div class="activity-item d-flex">
+                  <div class="activite-label">56 min</div>
+                  <i class='bi bi-circle-fill activity-badge text-danger align-self-start'></i>
+                  <div class="activity-content">
+                    Voluptatem blanditiis blanditiis eveniet
+                  </div>
+                </div><!-- End activity item-->
+
+                <div class="activity-item d-flex">
+                  <div class="activite-label">2 hrs</div>
+                  <i class='bi bi-circle-fill activity-badge text-primary align-self-start'></i>
+                  <div class="activity-content">
+                    Voluptates corrupti molestias voluptatem
+                  </div>
+                </div><!-- End activity item-->
+
+                <div class="activity-item d-flex">
+                  <div class="activite-label">1 day</div>
+                  <i class='bi bi-circle-fill activity-badge text-info align-self-start'></i>
+                  <div class="activity-content">
+                    Tempore autem saepe <a href="#" class="fw-bold text-dark">occaecati voluptatem</a> tempore
+                  </div>
+                </div><!-- End activity item-->
+
+                <div class="activity-item d-flex">
+                  <div class="activite-label">2 days</div>
+                  <i class='bi bi-circle-fill activity-badge text-warning align-self-start'></i>
+                  <div class="activity-content">
+                    Est sit eum reiciendis exercitationem
+                  </div>
+                </div><!-- End activity item-->
+
+                <div class="activity-item d-flex">
+                  <div class="activite-label">4 weeks</div>
+                  <i class='bi bi-circle-fill activity-badge text-muted align-self-start'></i>
+                  <div class="activity-content">
+                    Dicta dolorem harum nulla eius. Ut quidem quidem sit quas
+                  </div>
+                </div><!-- End activity item-->
+
+              </div>
+
+            </div>
+          </div><!-- End Recent Activity -->
+
+          <!-- Budget Report -->
+          <div class="card">
+            <div class="filter">
+              <a class="icon" href="#" data-bs-toggle="dropdown"><i class="bi bi-three-dots"></i></a>
+              <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
+                <li class="dropdown-header text-start">
+                  <h6>Filter</h6>
+                </li>
+
+                <li><a class="dropdown-item" href="#">Today</a></li>
+                <li><a class="dropdown-item" href="#">This Month</a></li>
+                <li><a class="dropdown-item" href="#">This Year</a></li>
+              </ul>
+            </div>
+
+            <div class="card-body pb-0">
+              <h5 class="card-title">Budget Report <span>| This Month</span></h5>
+
+              <div id="budgetChart" style="min-height: 400px;" class="echart"></div>
+
+              <script>
+                document.addEventListener("DOMContentLoaded", () => {
+                  var budgetChart = echarts.init(document.querySelector("#budgetChart")).setOption({
+                    legend: {
+                      data: ['Allocated Budget', 'Actual Spending']
+                    },
+                    radar: {
+                      // shape: 'circle',
+                      indicator: [{
+                          name: 'Sales',
+                          max: 6500
+                        },
+                        {
+                          name: 'Administration',
+                          max: 16000
+                        },
+                        {
+                          name: 'Information Technology',
+                          max: 30000
+                        },
+                        {
+                          name: 'Customer Support',
+                          max: 38000
+                        },
+                        {
+                          name: 'Development',
+                          max: 52000
+                        },
+                        {
+                          name: 'Marketing',
+                          max: 25000
+                        }
+                      ]
+                    },
+                    series: [{
+                      name: 'Budget vs spending',
+                      type: 'radar',
+                      data: [{
+                          value: [4200, 3000, 20000, 35000, 50000, 18000],
+                          name: 'Allocated Budget'
+                        },
+                        {
+                          value: [5000, 14000, 28000, 26000, 42000, 21000],
+                          name: 'Actual Spending'
+                        }
+                      ]
+                    }]
+                  });
+                });
+              </script>
+
+            </div>
+          </div><!-- End Budget Report -->
+
+          <!-- Website Traffic -->
+          <div class="card">
+            <div class="filter">
+              <a class="icon" href="#" data-bs-toggle="dropdown"><i class="bi bi-three-dots"></i></a>
+              <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
+                <li class="dropdown-header text-start">
+                  <h6>Filter</h6>
+                </li>
+
+                <li><a class="dropdown-item" href="#">Today</a></li>
+                <li><a class="dropdown-item" href="#">This Month</a></li>
+                <li><a class="dropdown-item" href="#">This Year</a></li>
+              </ul>
+            </div>
+
+            <div class="card-body pb-0">
+              <h5 class="card-title">Website Traffic <span>| Today</span></h5>
+
+              <div id="trafficChart" style="min-height: 400px;" class="echart"></div>
+
+              <script>
+                document.addEventListener("DOMContentLoaded", () => {
+                  echarts.init(document.querySelector("#trafficChart")).setOption({
+                    tooltip: {
+                      trigger: 'item'
+                    },
+                    legend: {
+                      top: '5%',
+                      left: 'center'
+                    },
+                    series: [{
+                      name: 'Access From',
+                      type: 'pie',
+                      radius: ['40%', '70%'],
+                      avoidLabelOverlap: false,
+                      label: {
+                        show: false,
+                        position: 'center'
+                      },
+                      emphasis: {
+                        label: {
+                          show: true,
+                          fontSize: '18',
+                          fontWeight: 'bold'
+                        }
+                      },
+                      labelLine: {
+                        show: false
+                      },
+                      data: [{
+                          value: 1048,
+                          name: 'Search Engine'
+                        },
+                        {
+                          value: 735,
+                          name: 'Direct'
+                        },
+                        {
+                          value: 580,
+                          name: 'Email'
+                        },
+                        {
+                          value: 484,
+                          name: 'Union Ads'
+                        },
+                        {
+                          value: 300,
+                          name: 'Video Ads'
+                        }
+                      ]
+                    }]
+                  });
+                });
+              </script>
+
+            </div>
+          </div><!-- End Website Traffic -->
+
+          
+
+        </div><!-- End Right side columns -->
+
+      </div>
+    </section>
+
+  </main><!-- End #main -->
+
+  <!-- ======= Footer ======= -->
+  <footer id="footer" class="footer">
+    <div class="copyright">
+      &copy; Copyright <strong><span>EventiFy</span></strong>. All Rights Reserved
+    </div>
+    <div class="credits">
+      <!-- All the links in the footer should remain intact. -->
+      <!-- You can delete the links only if you purchased the pro version. -->
+      <!-- Licensing information: https://bootstrapmade.com/license/ -->
+      <!-- Purchase the pro version with working PHP/AJAX contact form: https://bootstrapmade.com/nice-admin-bootstrap-admin-html-template/ -->
+      Designed by teamX
     </div>
   </footer><!-- End Footer -->
 
-  <div id="preloader"></div>
   <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
 
   <!-- Vendor JS Files -->
-  <script src="static/assets/vendor/purecounter/purecounter_vanilla.js"></script>
-  <script src="static/assets/vendor/aos/aos.js"></script>
+  <script src="static/assets/vendor/apexcharts/apexcharts.min.js"></script>
   <script src="static/assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
-  <script src="static/assets/vendor/glightbox/js/glightbox.min.js"></script>
-  <script src="static/assets/vendor/isotope-layout/isotope.pkgd.min.js"></script>
-  <script src="static/assets/vendor/swiper/swiper-bundle.min.js"></script>
+  <script src="static/assets/vendor/chart.js/chart.umd.js"></script>
+  <script src="static/assets/vendor/echarts/echarts.min.js"></script>
+  <script src="static/assets/vendor/quill/quill.min.js"></script>
+  <script src="static/assets/vendor/simple-datatables/simple-datatables.js"></script>
+  <script src="static/assets/vendor/tinymce/tinymce.min.js"></script>
   <script src="static/assets/vendor/php-email-form/validate.js"></script>
 
   <!-- Template Main JS File -->
-  <script src="static/assets/js/main.js"></script>
+  <script src="static/assets/js/main1.js"></script>
 
 </body>
 

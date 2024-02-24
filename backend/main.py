@@ -41,6 +41,7 @@ class users(UserMixin, db.Model):
     password = db.Column(db.String(1000))
     def get_id(self):
         return str(self.userid)
+
     
 class User(UserMixin):
     def __init__(self, username, email, password):
@@ -148,18 +149,18 @@ def adminlogin():
             session['email'] = email
             session['username'] = params['username']
             session['user_type'] = 'admin'   #Set user type to admin
-            return redirect(url_for("index"))
+            return redirect(url_for("admin"))
         else:
             flash("Invalid Credentials", "danger")
             error = 'Invalid Credentials. Please try again.'
     return render_template('adminlogin.html', error=error)
 
-@app.route('/index')
-def index():
+@app.route('/admin')
+def admin():
     if not session.get('logged_in'):
         return redirect(url_for('adminlogin'))
     else:
-        return render_template('index.html')
+        return render_template('admin.html')
 
 @app.route('/logout')
 def logout():
