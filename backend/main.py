@@ -18,7 +18,7 @@ login_manager.init_app(app)
 login_manager.login_view = "userlogin"
 
 #app.config
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://root:@localhost/testing'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://root:@localhost/event_management_system'
 db = SQLAlchemy(app)
 
 #admin details
@@ -27,23 +27,14 @@ with open('config.json','r') as c:
 
 @login_manager.user_loader
 def load_user(userid):
-    return users.query.get(int(userid))
+    return User.query.get(int(id))
 
 @login_manager.user_loader
 def load_user(username):
     return params.get(username)
 
-# users  table in the database
-class users(UserMixin, db.Model):
-    userid = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(20))
-    email = db.Column(db.String(20))
-    password = db.Column(db.String(1000))
-    def get_id(self):
-        return str(self.userid)
-
-    
-class User(UserMixin):
+#initializing json file  
+class Admin(UserMixin):
     def __init__(self, username, email, password):
         self.username = username
         self.email = email
@@ -52,6 +43,85 @@ class User(UserMixin):
     def get_id(self):
         return self.username
 
+#initializing users table in database   
+class User(UserMixin,db.Model):
+    __tablename__ = 'users'
+
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(100), nullable=False)
+    email = db.Column(db.String(100), unique=True, nullable=False)
+    password = db.Column(db.String(1000), nullable=False)
+    registeredon=db.Column(db.DateTime, default=datetime.utcnow)
+
+    bookings = db.relationship('Booking', backref='user', lazy=True, cascade="all, delete-orphan")
+    reviews = db.relationship('Review', backref='user', lazy=True, cascade="all, delete-orphan")
+    def get_id(self):
+         return str(self.id)
+
+
+#initializing event_categories table in database     
+class EventCategory(db.Model):
+    __tablename__ = 'event_categories'
+
+    id = db.Column(db.Integer, primary_key=True)
+    category_name = db.Column(db.String(100), nullable=False)
+    description = db.Column(db.Text)
+
+    events = db.relationship('Event', backref='category', lazy=True)
+
+#initializing events table in database
+class Event(db.Model):
+    __tablename__ = 'events'
+
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(100), nullable=False)
+    venue = db.Column(db.String(100))
+    date = db.Column(db.DateTime, nullable=False)
+    description = db.Column(db.Text)
+    category_id = db.Column(db.Integer, db.ForeignKey('event_categories.id'), nullable=False)
+    moredetails = db.Column(db.Text)
+    facilities = db.Column(db.Text)
+
+    bookings = db.relationship('Booking', backref='event', lazy=True)
+    reviews = db.relationship('Review', backref='event', lazy=True)
+    tickets = db.relationship('Ticket', backref='event', lazy=True)
+
+#initializing bookings table in database
+class Booking(db.Model):
+    __tablename__ = 'bookings'
+
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    event_id = db.Column(db.Integer, db.ForeignKey('events.id'), nullable=False)
+    ticket_id = db.Column(db.Integer, db.ForeignKey('tickets.id'), nullable=False)
+    date = db.Column(db.Date, nullable=False)
+    number_of_tickets = db.Column(db.Integer, nullable=False)
+    total_price = db.Column(db.Numeric(10, 2), nullable=False)
+
+#initializing tickets table in database
+class Ticket(db.Model):
+    __tablename__ = 'tickets'
+
+    id = db.Column(db.Integer, primary_key=True)
+    event_id = db.Column(db.Integer, db.ForeignKey('events.id'), nullable=False)
+    ticket_type = db.Column(db.String(50))
+    price = db.Column(db.Numeric(10, 2))
+    available_tickets = db.Column(db.Integer)
+
+    bookings = db.relationship('Booking', backref='ticket', lazy=True)
+
+#initializing reviews table in database
+class Review(db.Model):
+    __tablename__ = 'reviews'
+
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    event_id = db.Column(db.Integer, db.ForeignKey('events.id'), nullable=False)
+    rating = db.Column(db.Integer)
+    review_text = db.Column(db.Text)
+    review_date = db.Column(db.Date)
+
+#landing page
 @app.route("/")
 def home():
     return render_template("homepage.html")
@@ -70,14 +140,14 @@ def signup():
         encapassword = generate_password_hash(password)
         
         # Check if the user already exists before adding them to the database
-        user = users.query.filter_by(email=email).first()
-        user1 = users.query.filter_by(username=username).first()
+        user = User.query.filter_by(email=email).first()
+        user1 = User.query.filter_by(name=username).first()
         if user or user1:
             flash("Username or Email already exists","warning")
             return render_template("usersignup.html")
         
         # If the user doesn't exist, add them to the database
-        new_user = users(username=username, email=email, password=encapassword)
+        new_user = User(name=username, email=email, password=encapassword)
         db.session.add(new_user)  # Add the new user to the session
         db.session.commit()  # Commit (save) the changes
 
@@ -98,13 +168,13 @@ def add_no_cache(response):
 def before_request():
     if 'logged_in' in session:
         if session.get('user_type') == 'user':
-            user_record = users.query.filter_by(email=session['email']).first()
+            user_record = User.query.filter_by(email=session['email']).first()
             if user_record:
                 login_user(user_record)
         elif session.get('user_type') == 'admin':
             if params['email'] == session['email']:
                 # Create an admin object with the details from params
-                admin_record = User(params['username'], params['email'], params['password'])
+                admin_record = Admin(params['username'], params['email'], params['password'])
                 login_user(admin_record)
 #user login
 @app.route('/userlogin', methods=["POST", "GET"])
@@ -113,12 +183,12 @@ def userlogin():
     if request.method == "POST":
         email = request.form.get('email')
         password = request.form.get("password")
-        user_record = users.query.filter_by(email=email).first()
+        user_record = User.query.filter_by(email=email).first()
         if user_record and check_password_hash(user_record.password, password):
             login_user(user_record)
             session['logged_in'] = True
             session['email'] = email
-            session['username'] = user_record.username
+            session['username'] = user_record.name
             session['user_type'] = 'user'  # Set user type
             return redirect(url_for("user"))
         else:
@@ -143,7 +213,7 @@ def adminlogin():
         
         if(email==params['email'] and password==params['password']):
             # Create an admin object with the details from params
-            admin_record = User(params['username'], params['email'], params['password'])
+            admin_record = Admin(params['username'], params['email'], params['password'])
             login_user(admin_record)
             session['logged_in'] = True
             session['email'] = email
@@ -161,6 +231,8 @@ def admin():
         return redirect(url_for('adminlogin'))
     else:
         return render_template('admin.html')
+    
+
 
 @app.route('/logout')
 def logout():
@@ -172,45 +244,35 @@ def logout():
 
 
 #just testing
+@app.route('/admin/concerts')
+@login_required
+def concerts1():
+    # Assuming 'Concerts' category has id=1
+    event1 = Event.query.filter_by(category_id=1).all()
+    return render_template('adminconcert.html', events=event1)
+
+@app.route('/admin/festivals')
+@login_required
+def festivals1():
+    # Assuming 'Concerts' category has id=1
+    event2 = Event.query.filter_by(category_id=1).all()
+    return render_template('adminfestival.html', events=event2)
+
+@app.route('/admin/others')
+@login_required
+def others1():
+    # Assuming 'Concerts' category has id=1
+    event3 = Event.query.filter_by(category_id=1).all()
+    return render_template('adminothers.html', events=event3)
 
 
-#database intiating
-class event_categories(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    category_name = db.Column(db.String(255), nullable=False)
-    description = db.Column(db.Text)
-
-class events(db.Model):
-    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    name = db.Column(db.String(100), nullable=False)
-    venue = db.Column(db.String(100), nullable=False)
-    date = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
-    description = db.Column(db.String(1000))
-    ticketprice = db.Column(db.String(11))
-    category_id = db.Column(db.Integer, db.ForeignKey('event_categories.id'), nullable=False)
-    available_tickets = db.Column(db.Integer, nullable=False)
-    moredetails=db.Column(db.String(1000))
-    facilities=db.Column(db.String(1000))
-
-    category = db.relationship('event_categories', backref=db.backref('events', lazy=True))
-
-class bookings(db.Model):
-    booking_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('users.userid'), nullable=False)
-    event_id = db.Column(db.Integer, db.ForeignKey('events.id'), nullable=False)
-    booking_date = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
-    number_of_tickets = db.Column(db.Integer, nullable=False)
-    total_price = db.Column(db.Float, nullable=False)
-
-    user = db.relationship('users', backref=db.backref('bookings', lazy=True))
-    event = db.relationship('events', backref=db.backref('bookings', lazy=True))
 
 
 @app.route('/book_ticket/<int:event_id>', methods=['POST'])
 @login_required
 def book_ticket(event_id):
     # Get the event and the number of tickets from the form data
-    event = events.query.get(event_id)
+    event = Event.query.get(event_id)
     number_of_tickets = int(request.form.get('number_of_tickets'))
 
     # Check if there are enough tickets available
@@ -219,7 +281,7 @@ def book_ticket(event_id):
         total_price = event.ticketprice * number_of_tickets
 
         # Create a new booking
-        booking = bookings(user_id=current_user.userid, event_id=event_id, booking_date=datetime.now(), number_of_tickets=number_of_tickets, total_price=total_price)
+        booking = Booking(user_id=current_user.userid, event_id=event_id, booking_date=datetime.now(), number_of_tickets=number_of_tickets, total_price=total_price)
 
         # Add the new booking to the database
         db.session.add(booking)
@@ -241,7 +303,7 @@ def book_ticket(event_id):
 @login_required
 def concerts():
     # Assuming 'Concerts' category has id=1
-    concerts = events.query.filter_by(category_id=1).all()
+    concerts = Event.query.filter_by(category_id=1).all()
     return render_template('book.html', events=concerts)
 
 
@@ -249,14 +311,14 @@ def concerts():
 @login_required
 def festivals():
     # Assuming 'Concerts' category has id=1
-    festivals = events.query.filter_by(category_id=2).all()
+    festivals = Event.query.filter_by(category_id=2).all()
     return render_template('book.html', events=festivals)
 
 @app.route('/user/others')
 @login_required
 def others():
     # Assuming 'Concerts' category has id=1
-    others = events.query.filter_by(category_id=3).all()
+    others = Event.query.filter_by(category_id=3).all()
     return render_template('book.html', events=others)
 
 

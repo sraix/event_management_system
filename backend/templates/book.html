@@ -132,7 +132,7 @@
                             <div class="modal-header">
                                 <h5 class="modal-title" id="bookingModalLabel">Book Ticket for {{ event.name }}</h5>
                                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                    <span aria-hidden="true">×</span>
+                                    <span aria-hidden="true"></span>
                                 </button>
                             </div>
                             <form method="POST" action="{{ url_for('book_ticket', event_id=event.id) }}">
@@ -165,5 +165,7 @@
     <script src="{{ url_for('static', filename='assets/js/main.js') }}"></script>
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+    
+
 </body>
 </html>

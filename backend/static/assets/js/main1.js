@@ -300,25 +300,31 @@
      * Initiate Datatables
      */
     const datatables = select('.datatable', true)
-    datatables.forEach(datatable => {
-      new simpleDatatables.DataTable(datatable, {
-        perPageSelect: [5, 10, 15, ["All", -1]],
-        columns: [{
-            select: 2,
-            sortSequence: ["desc", "asc"]
-          },
-          {
-            select: 3,
-            sortSequence: ["desc"]
-          },
-          {
-            select: 4,
-            cellClass: "green",
-            headerClass: "red"
-          }
-        ]
-      });
-    })
+datatables.forEach(datatable => {
+  new simpleDatatables.DataTable(datatable, {
+    perPage: 6,  // Set the initial page length (number of rows per page)
+    perPageSelect: false,  // Disable the length change button
+    searchable: false,  // Disable the search box
+    labels: {
+      info: ""   // Set the info label to an empty string
+  },
+    columns: [{
+        select: 2,
+        sortSequence: ["desc", "asc"]
+      },
+      {
+        select: 3,
+        sortSequence: ["desc"]
+      },
+      {
+        select: 4,
+        cellClass: "green",
+        headerClass: "red"
+      }
+    ]
+  });
+});
+
   
     /**
      * Autoresize echart charts
@@ -335,3 +341,4 @@
     }
   
   })();
+ 
