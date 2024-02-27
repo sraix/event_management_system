@@ -26,6 +26,7 @@
         body, html {
         margin: 0;
         padding: 0;
+        font-family: 'Verdana';
     }
     .full-width {
         width: 100vw;
@@ -36,6 +37,7 @@
         flex-wrap: wrap;
         justify-content: space-between;
     }
+   
     .tile {
     /* Existing properties */
     display: flex;
@@ -72,86 +74,143 @@
     top: 10px;
     left: 10px;
 }
+
+.modal-content {
+    background-color: #f7f7f7;
+}
+
+.modal {
+    transition: all 0.3s ease-out;
+}
+.btn-primary {
+    background-color: #007bff;
+    border-color: #007bff;
+}
+
+.btn-primary:hover {
+    background-color: #0056b3;
+    border-color: #0056b3;
+}
+.modal-body label,
+    .modal-body select,
+    .modal-body p {
+        margin-bottom: 15px;  /* Adjust as needed */
+    }
     </style>
+    
+    
 </head>
 <body>
-    <a href="/user" class="btn btn-primary" id="back-button">Back</a>
+    <a href="/user#events" class="btn btn-primary" id="back-button">Back</a>
+
     <section id="events" class="services section-bg full-width">
         <div class="container" data-aos="fade-up">
+
             <div class="section-title">
                 <h2>Events</h2>
                 <p>Explore all the different Events!</p>
             </div>
+
             <div class="row">
                 {% for event in events %}
                 <div class="tile d-flex align-items-stretch mt-4 mt-lg-0" data-aos="zoom-in" data-aos-delay="300">
                     <div class="content">
                         <div>
-                            <h4><a href="" id="event-name">{{ event.name }}</a></h4>
-                            <h6>Venue:{{ event.venue }}</h6>
-                            <p id="date">{{event.date}}</p>
-                            <h6>Available Tickets:{{event.available_tickets}}</h6>
+                            <h4><a href="#" id="event-name">{{ event.name }}</a></h4><br>
+                            <p style="color: green;">Venue : {{ event.venue }}</p>
+                            <p style="color: red;" id="date">On : {{event.date}}</p>
+                            
                             <p id="description">{{ event.description }}</p>
                         </div>
+
                         <div class="button-container" style="display: flex; justify-content: center;">
                             <!-- Modify the "Book Ticket" button to open a modal -->
                             <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#bookingModal{{event.id}}">
                                 Book Ticket
                             </button>
                             <!-- Modify the "More Details" button to open the new modal -->
-<a href="" class="btn btn-secondary" data-toggle="modal" data-target="#detailsModal{{event.id}}" id="more-details">More Details</a>
+                            <a href="" class="btn btn-secondary" data-toggle="modal" data-target="#detailsModal{{event.id}}" id="more-details">More Details</a>
                         </div>
                     </div>
                 </div>
+
                 <!-- More Details Modal -->
-<div class="modal fade" id="detailsModal{{event.id}}" tabindex="-1" role="dialog" aria-labelledby="detailsModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg" role="document">
+                <div class="modal fade" id="detailsModal{{event.id}}" tabindex="-1" role="dialog" aria-labelledby="detailsModalLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-lg" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="detailsModalLabel">More Details for {{ event.name }}</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">×</span>
+                                </button>
+                            </div>
+
+                            <div class="modal-body">
+                                <!-- Add the details you want to display here -->
+                                <p>{{ event.moredetails }}</p>
+                                
+                                <!-- Add more fields as needed -->
+                            </div>
+
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Booking Modal -->
+<div class="modal fade" id="bookingModal{{event.id}}" tabindex="-1" role="dialog" aria-labelledby="bookingModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="detailsModalLabel">More Details for {{ event.name }}</h5>
+                <h5 class="modal-title" id="bookingModalLabel">Book Ticket for {{ event.name }}</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">×</span>
+                    <span aria-hidden="true"></span>
                 </button>
             </div>
+
+            {% if event.tickets|length > 0 %}
+            <form method="POST" action="{{ url_for('book_ticket', event_id=event.id) }}">
+                <div class="modal-body">
+                    <label for="ticket_type">Ticket Type:</label>
+                    <select id="ticket_type" name="ticket_type">
+                        {% for ticket in tickets %}
+                            {% if ticket.event_id == event.id %}
+                                <option value="{{ ticket.id }}">{{ ticket.ticket_type }}</option>
+                            {% endif %}
+                        {% endfor %}
+                    </select>
+
+                    <p id="price">Price: <span id="ticket_price" style="color: green;"></span></p>
+                    <p id="available_tickets">Available Tickets: <span id="available_ticket_count" style="color: red; ;"></span></p>
+
+                    <label for="number_of_tickets">Number of Tickets:</label>
+                    <input type="number" id="number_of_tickets" name="number_of_tickets" min="1" max="{{ event.available_tickets }}">
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                    <input type="submit" class="btn btn-primary" value="Confirm Booking">
+                </div>
+            </form>
+            {% else %}
             <div class="modal-body">
-                <!-- Add the details you want to display here -->
-                <p>{{ event.moredetails }}</p>
-                <p>{{ event.facilities }}</p>
-                <!-- Add more fields as needed -->
+                <p>Bookings are closed for this event.</p>
             </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-            </div>
+            {% endif %}
         </div>
     </div>
 </div>
-                <!-- Booking Modal -->
-                <div class="modal fade" id="bookingModal{{event.id}}" tabindex="-1" role="dialog" aria-labelledby="bookingModalLabel" aria-hidden="true">
-                    <div class="modal-dialog" role="document">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h5 class="modal-title" id="bookingModalLabel">Book Ticket for {{ event.name }}</h5>
-                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                    <span aria-hidden="true"></span>
-                                </button>
-                            </div>
-                            <form method="POST" action="{{ url_for('book_ticket', event_id=event.id) }}">
-                                <div class="modal-body">
-                                    <label for="number_of_tickets">Number of Tickets:</label>
-                                    <input type="number" id="number_of_tickets" name="number_of_tickets" min="1" max="{{ event.available_tickets }}">
-                                </div>
-                                <div class="modal-footer">
-                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-                                    <input type="submit" class="btn btn-primary" value="Confirm Booking">
-                                </div>
-                            </form>
-                        </div>
-                    </div>
-                </div>
-                {% endfor %}
+{% endfor %}
+
             </div>
         </div>
     </section>
+
+    
+
+
 
     <script src="{{ url_for('static', filename='assets/vendor/purecounter/purecounter_vanilla.js') }}"></script>
     <script src="{{ url_for('static', filename='assets/vendor/aos/aos.js') }}"></script>
@@ -165,7 +224,20 @@
     <script src="{{ url_for('static', filename='assets/js/main.js') }}"></script>
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
-    
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script>
+        var tickets = JSON.parse('{{ tickets_json | safe }}');
+        
+        $(document).ready(function() {
+    $('#ticket_type').change(function() {
+        var selectedTicketId = $(this).val();
+        var selectedTicket = tickets.find(ticket => ticket.id == selectedTicketId);
+        $('#ticket_price').text(selectedTicket.price);
+        $('#available_ticket_count').text(selectedTicket.available_tickets);
+    }).change();  // Trigger the change event manually
+});
+    </script>
+
 
 </body>
 </html>

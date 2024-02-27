@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Bookings</title>
+    <link href="https://cdn.rawgit.com/michalsnik/aos/2.1.1/dist/aos.css" rel="stylesheet">
+    <script src="https://cdn.rawgit.com/michalsnik/aos/2.1.1/dist/aos.js"></script>
+
+    <!-- Include Bootstrap CSS -->
+    <link href="{{ url_for('static', filename='assets/img/favicon.png') }}" rel="icon">
+    <link href="{{ url_for('static', filename='assets/img/apple-touch-icon.png') }}" rel="apple-touch-icon">
+  
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Raleway:300,300i,400,400i,500,500i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i" rel="stylesheet">
+  
+    <!-- Vendor CSS Files -->
+    <link href="{{ url_for('static', filename='assets/vendor/aos/aos.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='assets/vendor/bootstrap/css/bootstrap.min.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='assets/vendor/bootstrap-icons/bootstrap-icons.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='assets/vendor/boxicons/css/boxicons.min.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='assets/vendor/glightbox/css/glightbox.min.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='assets/vendor/remixicon/remixicon.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='assets/vendor/swiper/swiper-bundle.min.css') }}" rel="stylesheet">
+  
+    <!-- Template Main CSS File -->
+    <link href="{{ url_for('static', filename='assets/css/style.css') }}" rel="stylesheet">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
+    <style>
+        #back-button {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+}
+    </style>
+</head>
+<body>
+    <a href="/user" class="btn btn-primary" id="back-button">Back</a>
+    <div class="section-title" style="margin-top: 50px;" data-aos="fade">
+        <h3>Your Bookings</h3>
+        
+    </div>
+    <div class="container">
+       
+
+        <div class="row">
+            {% for booking in bookings %}
+            <div class="col-md-4 mt-4">
+                <div class="card" style="border-radius: 15px; overflow: hidden; transition: transform .2s;">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ booking.event.name }}</h5>
+                        <p class="card-text">
+                            Ticket Type: {{ booking.ticket.ticket_type }}<br>
+                            Number of Tickets: {{ booking.number_of_tickets }}
+                        </p>
+                        <form method="POST" action="{{ url_for('cancel_booking', booking_id=booking.id) }}">
+                            <div style="text-align: center;">
+                                <button type="submit" class="btn btn-danger">Cancel</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            
+            {% else %}
+            <!-- No Bookings Modal -->
+            <div class="modal fade" id="noBookingsModal" tabindex="-1" role="dialog" aria-labelledby="noBookingsModalLabel" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="noBookingsModalLabel">No Bookings</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">×</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            You have no bookings. Would you like to book a ticket?
+                        </div>
+                        <div class="modal-footer">
+                            
+                            <a href="{{ url_for('user') }}" class="btn btn-primary">Book Now</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Include Bootstrap JS -->
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
+    <script src="{{ url_for('static', filename='assets/vendor/purecounter/purecounter_vanilla.js') }}"></script>
+    <script src="{{ url_for('static', filename='assets/vendor/aos/aos.js') }}"></script>
+    <script src="{{ url_for('static', filename='assets/vendor/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='assets/vendor/glightbox/js/glightbox.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='assets/vendor/isotope-layout/isotope.pkgd.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='assets/vendor/swiper/swiper-bundle.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='assets/vendor/php-email-form/validate.js') }}"></script>
+    
+    <!-- Template Main JS File -->
+    <script src="{{ url_for('static', filename='assets/js/main.js') }}"></script>
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script>
+        AOS.init();
+      </script>
+    <script>
+        $(document).ready(function() {
+    $.getJSON('/get_bookings', function(bookings) {
+        if (bookings.length == 0) {
+            $('#noBookingsModal').modal('show');
+        } else {
+            // Add the bookings to the page
+            for (var i = 0; i < bookings.length; i++) {
+                var booking = bookings[i];
+                // Add the booking to the page
+                // ...
+            }
+        }
+    });
+});
+    </script>
+</body>
+
+</html>
