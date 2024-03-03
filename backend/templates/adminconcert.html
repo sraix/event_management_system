@@ -222,7 +222,7 @@
     </div>
   </div>
 
-<!-- Modify Modal -->
+
 <!-- Modify Modal -->
 <div class="modal fade" id="modifyModal" tabindex="-1" role="dialog" aria-labelledby="modifyModalLabel" aria-hidden="true">
   <div class="modal-dialog" role="document">
@@ -263,7 +263,9 @@
             <label>Tickets</label>
             <!-- Tickets will be added here by JavaScript -->
           </div>
+          <div>
           <button type="button" id="add-ticket" class="btn btn-secondary">Add Ticket</button>
+        </div>
         </form>
       </div>
       <div class="modal-footer">
@@ -273,6 +275,7 @@
     </div>
   </div>
 </div>
+
 
 
 
@@ -292,9 +295,9 @@
 
 <script>
   // Declare eventData globally
-  var eventData = { keep_ticket_ids: [] };
-
+  
   $(document).ready(function () {
+    
       var eventId;
 
       $('#add-button').click(function () {
@@ -358,10 +361,14 @@
           });
       });
 
+    
+
       var eventData = { keep_ticket_ids: [] };
+var eventId;
 
 $(document).ready(function () {
-    var eventId;
+    console.log($);  // Logs the jQuery function
+    console.log("Script loaded!");
 
     // Function to initialize eventData
     function initializeEventData() {
@@ -371,8 +378,9 @@ $(document).ready(function () {
     // Function to add a ticket field
     function addTicketField(ticket = {}) {
         if (!eventData.keep_ticket_ids) {
-            console.error("eventData.keep_ticket_ids is undefined. Initializing eventData.");
+            // console.error("eventData.keep_ticket_ids is undefined. Initializing eventData.");
             eventData = initializeEventData();
+            console.log("initialized");
         }
 
         var ticketDiv = $('<div class="ticket"></div>');
@@ -407,8 +415,6 @@ $(document).ready(function () {
         $('#modify-tickets').append(ticketDiv);
     }
 
-    // Rest of your JavaScript code...
-
     // When a modify button is clicked
     $('.modify-event').click(function () {
         eventId = $(this).data('event-id');
@@ -439,7 +445,8 @@ $(document).ready(function () {
     });
 
     // When the add ticket button is clicked, add a new ticket field
-    $('#add-ticket').click(function () {
+    $(document).on('click', '#add-ticket', function () {
+        console.log("Add Ticket button clicked!");
         addTicketField();
     });
 
@@ -484,8 +491,10 @@ $(document).ready(function () {
             }
         });
     });
-
 });
+
+
+
 
   });
 </script>

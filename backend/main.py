@@ -6,6 +6,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from sqlalchemy import create_engine, text
 from datetime import datetime
 from flask import json,jsonify
+from sqlalchemy.exc import SQLAlchemyError
 
 # mydatabase connection
 local_server = True
@@ -344,28 +345,37 @@ def modify_event(event_id):
 
         # Update tickets for the event
         for ticket_data in data.get('tickets', []):
-            ticket = Ticket.query.get(ticket_data.get('id')) if 'id' in ticket_data else None
-            if ticket:
+            if 'id' in ticket_data:
                 # Update existing ticket
-                ticket.ticket_type = ticket_data.get('ticket_type', ticket.ticket_type)
-                ticket.price = ticket_data.get('price', ticket.price)
-                ticket.available_tickets = ticket_data.get('available_tickets', ticket.available_tickets)
+                ticket = Ticket.query.get(ticket_data.get('id'))
+                if ticket:
+                    ticket.ticket_type = ticket_data.get('ticket_type', ticket.ticket_type)
+                    ticket.price = ticket_data.get('price', ticket.price)
+                    ticket.available_tickets = ticket_data.get('available_tickets', ticket.available_tickets)
             else:
                 # Create new ticket
+                print("Creating new ticket with data:", ticket_data)
                 ticket = Ticket(event_id=event.id, ticket_type=ticket_data.get('ticket_type'),
                                 price=ticket_data.get('price'), available_tickets=ticket_data.get('available_tickets'))
+                print("Created new ticket:", ticket)
                 db.session.add(ticket)
 
         # Delete any tickets that weren't in the data
         if 'keep_ticket_ids' in data:
             for ticket in event.tickets:
-                if ticket.id not in data.get('keep_ticket_ids', []):
+                if ticket.id in data.get('keep_ticket_ids', []):
                     db.session.delete(ticket)
 
-        db.session.commit()
-        return jsonify(success=True)
-    return jsonify(success=False)
+        try:
+            db.session.commit()
+            print("Committed the session")
+            return jsonify(success=True)
+        except SQLAlchemyError as e:
+            db.session.rollback()
+            print("Error occurred:", str(e))
+            return jsonify(success=False, error=str(e))
 
+    return jsonify(success=False)
 
 @app.route('/admin/concerts')
 @login_required
