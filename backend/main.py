@@ -26,7 +26,7 @@ with open('config.json','r') as c:
     params=json.load(c)["params"]
 
 @login_manager.user_loader
-def load_user(userid):
+def load_user(id):
     return User.query.get(int(id))
 
 @login_manager.user_loader
@@ -77,6 +77,7 @@ class Event(db.Model):
     name = db.Column(db.String(100), nullable=False)
     venue = db.Column(db.String(100))
     date = db.Column(db.DateTime, nullable=False)
+    end = db.Column(db.DateTime, nullable=False)
     description = db.Column(db.Text)
     category_id = db.Column(db.Integer, db.ForeignKey('event_categories.id'), nullable=False)
     moredetails = db.Column(db.Text)
@@ -119,6 +120,8 @@ class Review(db.Model):
     rating = db.Column(db.Integer)
     review_text = db.Column(db.Text)
     review_date = db.Column(db.Date)
+
+
 
 #landing page
 @app.route("/")
@@ -243,25 +246,152 @@ def logout():
 
 
 #just testing
+from flask import request, jsonify, render_template
+from datetime import datetime
+
+@app.route('/admin/concerts/add', methods=['POST'])
+@login_required
+def add_event():
+    
+    if request.is_json:
+        try:
+            data = request.get_json()
+            event = Event(
+                name=data.get('name'),
+                venue=data.get('venue'),
+                date=datetime.strptime(data.get('start'), '%Y-%m-%dT%H:%M'),
+                end=datetime.strptime(data.get('end'), '%Y-%m-%dT%H:%M'),
+                description=data.get('description'),
+                category_id=1,  # Assuming 'Concerts' category has id=1
+                moredetails=data.get('moredetails')
+            )
+            db.session.add(event)
+            db.session.commit()
+
+            # Add tickets for the event
+            for ticket_data in data.get('tickets', []):
+                ticket = Ticket(
+                    event_id=event.id,
+                    ticket_type=ticket_data.get('ticket_type'),
+                    price=ticket_data.get('price'),
+                    available_tickets=ticket_data.get('available_tickets')
+                )
+                db.session.add(ticket)
+
+            db.session.commit()
+            return jsonify(success=True)
+        except Exception as e:
+            print(e)  # print the exception to the console, or log it if you have a logger set up
+            db.session.rollback()  # rollback the transaction in case of error
+            return jsonify(success=False, error=str(e)), 500
+    return jsonify(success=False)
+
+
+@app.route('/admin/concerts/delete/<int:event_id>', methods=['POST'])
+@login_required
+def delete_event(event_id):
+    event = Event.query.get(event_id)
+    if event:
+        db.session.delete(event)
+        db.session.commit()
+        return jsonify(success=True)
+    return jsonify(success=False)
+
+@app.route('/admin/concerts/modify/<int:event_id>', methods=['GET'])
+@login_required
+def get_event_for_modify(event_id):
+    event = Event.query.get(event_id)
+    if event:
+        # Convert event details to a dictionary
+        event_details = {
+            'name': event.name,
+            'venue': event.venue,
+            'date': event.date.strftime('%Y-%m-%dT%H:%M') if event.date else None,
+            'end': event.end.strftime('%Y-%m-%dT%H:%M') if event.end else None,
+            'description': event.description,
+            'moredetails': event.moredetails,
+            'tickets': []
+        }
+
+        # Include ticket details if available
+        for ticket in event.tickets:
+            event_details['tickets'].append({
+                'id': ticket.id,
+                'ticket_type': ticket.ticket_type,
+                'price': ticket.price,
+                'available_tickets': ticket.available_tickets
+            })
+
+        return jsonify(success=True, event=event_details)
+    else:
+        return jsonify(success=False, error='Event not found'), 404
+
+
+@app.route('/admin/concerts/modify/<int:event_id>', methods=['POST'])
+@login_required
+def modify_event(event_id):
+    event = Event.query.get(event_id)
+    if event and request.is_json:
+        data = request.get_json()
+        print("Data received from client:", data)
+        print("Keep ticket ids:", data.get('keep_ticket_ids', []))
+        event.name = data.get('name', event.name)
+        event.venue = data.get('venue', event.venue)
+        event.date = datetime.strptime(data.get('date'), '%Y-%m-%dT%H:%M') if data.get('date') else event.date
+        event.end = datetime.strptime(data.get('end'), '%Y-%m-%dT%H:%M') if data.get('end') else event.end
+        event.description = data.get('description', event.description)
+        event.moredetails = data.get('moredetails', event.moredetails)
+
+        # Update tickets for the event
+        for ticket_data in data.get('tickets', []):
+            ticket = Ticket.query.get(ticket_data.get('id')) if 'id' in ticket_data else None
+            if ticket:
+                # Update existing ticket
+                ticket.ticket_type = ticket_data.get('ticket_type', ticket.ticket_type)
+                ticket.price = ticket_data.get('price', ticket.price)
+                ticket.available_tickets = ticket_data.get('available_tickets', ticket.available_tickets)
+            else:
+                # Create new ticket
+                ticket = Ticket(event_id=event.id, ticket_type=ticket_data.get('ticket_type'),
+                                price=ticket_data.get('price'), available_tickets=ticket_data.get('available_tickets'))
+                db.session.add(ticket)
+
+        # Delete any tickets that weren't in the data
+        if 'keep_ticket_ids' in data:
+            for ticket in event.tickets:
+                if ticket.id not in data.get('keep_ticket_ids', []):
+                    db.session.delete(ticket)
+
+        db.session.commit()
+        return jsonify(success=True)
+    return jsonify(success=False)
+
+
 @app.route('/admin/concerts')
 @login_required
 def concerts1():
     # Assuming 'Concerts' category has id=1
-    event1 = Event.query.filter_by(category_id=1).all()
-    return render_template('adminconcert.html', events=event1)
+    events = Event.query.filter_by(category_id=1).all()
+
+    # Get the tickets for each event
+    tickets = {event.id: Ticket.query.filter_by(event_id=event.id).all() for event in events}
+
+    return render_template('adminconcert.html', events=events, tickets=tickets)
+
+
 
 @app.route('/admin/festivals')
 @login_required
 def festivals1():
     # Assuming 'Concerts' category has id=1
-    event2 = Event.query.filter_by(category_id=1).all()
+    event2 = Event.query.filter_by(category_id=2).all()
     return render_template('adminfestival.html', events=event2)
 
 @app.route('/admin/others')
 @login_required
 def others1():
     # Assuming 'Concerts' category has id=1
-    event3 = Event.query.filter_by(category_id=1).all()
+    event3 = Event.query.filter_by(category_id=3).all()
     return render_template('adminothers.html', events=event3)
 
 
@@ -302,38 +432,66 @@ def book_ticket(event_id):
 
         # Redirect the user to the events page
         return redirect(url_for('user'))
-    else:
-        # If there are not enough tickets available, show an error message
-        return "Sorry, there are not enough tickets available for this event."
 
+    else:
+        flash('Not enough tickets available.', 'error')
+        return redirect(url_for('concerts'))
+
+
+
+
+from sqlalchemy import func
 
 @app.route('/user/concerts')
 @login_required
 def concerts():
     # Assuming 'Concerts' category has id=1
     concerts = Event.query.filter_by(category_id=1).all()
+
+    # Calculate the total number of available tickets for each event
+    total_available_tickets = {}
+    for concert in concerts:
+        total_available_tickets[concert.id] = db.session.query(func.sum(Ticket.available_tickets)).filter(Ticket.event_id == concert.id).scalar()
+
     tickets = Ticket.query.filter(Ticket.event_id.in_([event.id for event in concerts])).all()
     tickets_json = json.dumps([{'id': ticket.id, 'price': str(ticket.price), 'available_tickets': ticket.available_tickets} for ticket in tickets])
-    return render_template('book.html', events=concerts, tickets=tickets, tickets_json=tickets_json)
 
+    # Pass the total_available_tickets dictionary to the template
+    return render_template('book.html', events=concerts, tickets=tickets, tickets_json=tickets_json, total_available_tickets=total_available_tickets)
 
 @app.route('/user/festivals')
 @login_required
 def festivals():
-    # Assuming 'Concerts' category has id=2
+    # Assuming 'Concerts' category has id=1
     festivals = Event.query.filter_by(category_id=2).all()
+
+    # Calculate the total number of available tickets for each event
+    total_available_tickets = {}
+    for festival in festivals:
+        total_available_tickets[festival.id] = db.session.query(func.sum(Ticket.available_tickets)).filter(Ticket.event_id == festival.id).scalar()
+
     tickets = Ticket.query.filter(Ticket.event_id.in_([event.id for event in festivals])).all()
     tickets_json = json.dumps([{'id': ticket.id, 'price': str(ticket.price), 'available_tickets': ticket.available_tickets} for ticket in tickets])
-    return render_template('book.html', events=festivals, tickets=tickets, tickets_json=tickets_json)
+
+    # Pass the total_available_tickets dictionary to the template
+    return render_template('book.html', events=festivals, tickets=tickets, tickets_json=tickets_json, total_available_tickets=total_available_tickets)
 
 @app.route('/user/others')
 @login_required
 def others():
-    # Assuming 'Concerts' category has id=3
+    # Assuming 'Concerts' category has id=1
     others = Event.query.filter_by(category_id=3).all()
+
+    # Calculate the total number of available tickets for each event
+    total_available_tickets = {}
+    for other in others:
+        total_available_tickets[other.id] = db.session.query(func.sum(Ticket.available_tickets)).filter(Ticket.event_id == other.id).scalar()
+
     tickets = Ticket.query.filter(Ticket.event_id.in_([event.id for event in others])).all()
     tickets_json = json.dumps([{'id': ticket.id, 'price': str(ticket.price), 'available_tickets': ticket.available_tickets} for ticket in tickets])
-    return render_template('book.html', events=others, tickets=tickets, tickets_json=tickets_json)
+
+    # Pass the total_available_tickets dictionary to the template
+    return render_template('book.html', events=others, tickets=tickets, tickets_json=tickets_json, total_available_tickets=total_available_tickets)
 
 @app.route('/user/booking')
 @login_required
@@ -353,13 +511,6 @@ def cancel_booking(booking_id):
     # Check if the booking exists and belongs to the current user
     if booking is None or booking.user_id != current_user.id:
         return "Booking not found", 404
-
-    # Get the ticket associated with the booking
-    ticket = Ticket.query.get(booking.ticket_id)
-
-    # Increase the number of available tickets
-    ticket.available_tickets += booking.number_of_tickets
-    db.session.commit()
 
     # Delete the booking
     db.session.delete(booking)

@@ -101,6 +101,8 @@
     
 </head>
 <body>
+    
+
     <a href="/user#events" class="btn btn-primary" id="back-button">Back</a>
 
     <section id="events" class="services section-bg full-width">
@@ -110,13 +112,19 @@
                 <h2>Events</h2>
                 <p>Explore all the different Events!</p>
             </div>
-
+            {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                <div   class="alert alert-danger">
+                    {{ messages[0] }}
+                </div>
+            {% endif %}
+        {% endwith %}
             <div class="row">
                 {% for event in events %}
                 <div class="tile d-flex align-items-stretch mt-4 mt-lg-0" data-aos="zoom-in" data-aos-delay="300">
                     <div class="content">
                         <div>
-                            <h4><a href="#" id="event-name">{{ event.name }}</a></h4><br>
+                            <h4 style="color: rgb(0, 110, 255);" id="event-name">{{ event.name }}</a></h4><br>
                             <p style="color: green;">Venue : {{ event.venue }}</p>
                             <p style="color: red;" id="date">On : {{event.date}}</p>
                             
@@ -124,10 +132,17 @@
                         </div>
 
                         <div class="button-container" style="display: flex; justify-content: center;">
-                            <!-- Modify the "Book Ticket" button to open a modal -->
-                            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#bookingModal{{event.id}}">
-                                Book Ticket
-                            </button>
+                           <!-- Modify the "Book Ticket" button to open a modal -->
+                           {% if total_available_tickets.get(event.id) and total_available_tickets[event.id] > 0 %}
+<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#bookingModal{{event.id}}">
+    Book Ticket
+</button>
+{% else %}
+<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#alertModal">
+    Book Ticket
+</button>
+{% endif %}
+
                             <!-- Modify the "More Details" button to open the new modal -->
                             <a href="" class="btn btn-secondary" data-toggle="modal" data-target="#detailsModal{{event.id}}" id="more-details">More Details</a>
                         </div>
@@ -160,55 +175,76 @@
                 </div>
 
                 <!-- Booking Modal -->
-<div class="modal fade" id="bookingModal{{event.id}}" tabindex="-1" role="dialog" aria-labelledby="bookingModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="bookingModalLabel">Book Ticket for {{ event.name }}</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true"></span>
-                </button>
-            </div>
+                <div class="modal fade" id="bookingModal{{event.id}}" tabindex="-1" role="dialog" aria-labelledby="bookingModalLabel" aria-hidden="true">
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="bookingModalLabel">Book Ticket for {{ event.name }}</h5>
+                                
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true"></span>
+                                </button>
+                            </div>
 
-            {% if event.tickets|length > 0 %}
-            <form method="POST" action="{{ url_for('book_ticket', event_id=event.id) }}">
-                <div class="modal-body">
-                    <label for="ticket_type">Ticket Type:</label>
-                    <select id="ticket_type" name="ticket_type">
-                        {% for ticket in tickets %}
-                            {% if ticket.event_id == event.id %}
-                                <option value="{{ ticket.id }}">{{ ticket.ticket_type }}</option>
+                            {% if event.tickets|length > 0 %}
+                            <form method="POST" action="{{ url_for('book_ticket', event_id=event.id) }}" onsubmit="return validateForm()">
+                                
+                                <div class="modal-body">
+                                    <label for="ticket_type">Ticket Type:</label>
+                                    <select id="ticket_type" name="ticket_type">
+                                        {% for ticket in tickets %}
+                                            {% if ticket.event_id == event.id %}
+                                                <option value="{{ ticket.id }}">{{ ticket.ticket_type }}</option>
+                                            {% endif %}
+                                        {% endfor %}
+                                    </select>
+
+                                    <p id="price">Price: <span id="ticket_price" style="color: green;"></span></p>
+                                    <p id="available_tickets">Available Tickets: <span id="available_ticket_count" style="color: red; ;"></span></p>
+
+                                    <label for="number_of_tickets">Number of Tickets:</label>
+                                    <input type="number" id="number_of_tickets" name="number_of_tickets" min="1" max="{{ event.available_tickets }}">
+                                </div>
+
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                                    <input type="submit" class="btn btn-primary" value="Confirm Booking">
+                                </div>
+                            </form>
+                            {% else %}
+                            <div class="modal-body">
+                                <p>Bookings are closed for this event.</p>
+                            </div>
                             {% endif %}
-                        {% endfor %}
-                    </select>
-
-                    <p id="price">Price: <span id="ticket_price" style="color: green;"></span></p>
-                    <p id="available_tickets">Available Tickets: <span id="available_ticket_count" style="color: red; ;"></span></p>
-
-                    <label for="number_of_tickets">Number of Tickets:</label>
-                    <input type="number" id="number_of_tickets" name="number_of_tickets" min="1" max="{{ event.available_tickets }}">
+                        </div>
+                    </div>
                 </div>
-
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-                    <input type="submit" class="btn btn-primary" value="Confirm Booking">
-                </div>
-            </form>
-            {% else %}
-            <div class="modal-body">
-                <p>Bookings are closed for this event.</p>
-            </div>
-            {% endif %}
-        </div>
-    </div>
-</div>
-{% endfor %}
+                <!-- The endfor tag for the event loop should be here -->
+                {% endfor %}
 
             </div>
         </div>
     </section>
 
-    
+    <!-- Alert Modal -->
+    <div class="modal fade" id="alertModal" tabindex="-1" role="dialog" aria-labelledby="alertModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="alertModalLabel">Better Luck Next Time!</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    All the Tickets for this event is booked!!.
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
 
 
@@ -238,6 +274,28 @@
 });
     </script>
 
-
+<!-- <script>
+    function validateForm() {
+      var availableTickets = document.getElementById('available_ticket_count').innerText;
+      var numberOfTickets = document.getElementById('number_of_tickets').value;
+    
+      if (numberOfTickets > availableTickets) {
+        // Hide all modals
+        $('.modal').modal('hide');
+    
+        // Wait for the modal to finish hiding before showing the alert
+        setTimeout(function() {
+          $('#alertModal').modal('show');
+          // Manually add the 'modal-open' class to the <body> element
+          $('body').addClass('modal-open');
+        },);  // Adjust the delay as needed
+    
+        return false;
+      }
+    
+      return true;
+    }
+    </script> -->
+    
 </body>
 </html>
