@@ -86,6 +86,7 @@ class Event(db.Model):
     bookings = db.relationship('Booking', backref='event', lazy=True)
     reviews = db.relationship('Review', backref='event', lazy=True)
     tickets = db.relationship('Ticket', backref='event', lazy=True)
+    
 
 #initializing bookings table in database
 class Booking(db.Model):
@@ -329,13 +330,14 @@ def get_event_for_modify(event_id):
 
 
 @app.route('/admin/concerts/modify/<int:event_id>', methods=['POST'])
-@login_required
 def modify_event(event_id):
     event = Event.query.get(event_id)
+
     if event and request.is_json:
         data = request.get_json()
         print("Data received from client:", data)
         print("Keep ticket ids:", data.get('keep_ticket_ids', []))
+
         event.name = data.get('name', event.name)
         event.venue = data.get('venue', event.venue)
         event.date = datetime.strptime(data.get('date'), '%Y-%m-%dT%H:%M') if data.get('date') else event.date
@@ -343,39 +345,48 @@ def modify_event(event_id):
         event.description = data.get('description', event.description)
         event.moredetails = data.get('moredetails', event.moredetails)
 
-        # Update tickets for the event
+        # Keep track of existing ticket ids to delete if not present in the new data
+        existing_ticket_ids = [ticket.id for ticket in event.tickets]
+
+        # Update existing tickets and create new ones
         for ticket_data in data.get('tickets', []):
-            if 'id' in ticket_data:
+            ticket_id = ticket_data.get('id')
+            if ticket_id in existing_ticket_ids:
                 # Update existing ticket
-                ticket = Ticket.query.get(ticket_data.get('id'))
-                if ticket:
-                    ticket.ticket_type = ticket_data.get('ticket_type', ticket.ticket_type)
-                    ticket.price = ticket_data.get('price', ticket.price)
-                    ticket.available_tickets = ticket_data.get('available_tickets', ticket.available_tickets)
+                ticket = Ticket.query.get(ticket_id)
+                ticket.ticket_type = ticket_data.get('ticket_type', ticket.ticket_type)
+                ticket.price = ticket_data.get('price', ticket.price)
+                ticket.available_tickets = ticket_data.get('available_tickets', ticket.available_tickets)
+                existing_ticket_ids.remove(ticket_id)
             else:
                 # Create new ticket
-                print("Creating new ticket with data:", ticket_data)
-                ticket = Ticket(event_id=event.id, ticket_type=ticket_data.get('ticket_type'),
-                                price=ticket_data.get('price'), available_tickets=ticket_data.get('available_tickets'))
-                print("Created new ticket:", ticket)
+                ticket = Ticket(
+                    event_id=event.id,
+                    ticket_type=ticket_data.get('ticket_type'),
+                    price=ticket_data.get('price'),
+                    available_tickets=ticket_data.get('available_tickets')
+                )
                 db.session.add(ticket)
+                print("Added the new ticket to the session")
 
-        # Delete any tickets that weren't in the data
-        if 'keep_ticket_ids' in data:
-            for ticket in event.tickets:
-                if ticket.id in data.get('keep_ticket_ids', []):
-                    db.session.delete(ticket)
+        # Delete tickets that were not present in the new data
+        for ticket_id in existing_ticket_ids:
+            ticket = Ticket.query.get(ticket_id)
+            db.session.delete(ticket)
 
         try:
             db.session.commit()
+            print("Number of tickets for the event:", len(event.tickets))
             print("Committed the session")
             return jsonify(success=True)
-        except SQLAlchemyError as e:
+
+        except Exception as e:
             db.session.rollback()
             print("Error occurred:", str(e))
-            return jsonify(success=False, error=str(e))
+            raise e  # Re-raise the exception to see its traceback in the logs
 
     return jsonify(success=False)
+
 
 @app.route('/admin/concerts')
 @login_required

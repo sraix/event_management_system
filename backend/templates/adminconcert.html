@@ -116,10 +116,11 @@
         <div class="content">
           <div>
             <h4 style="color: rgb(0, 128, 255);" id="event-name" >{{ event.name }}</h4><br>
-            <p style="color: green;" id="venue">{{ event.venue }}</p>
+            <p style="color: green;" id="venue">Venue : {{ event.venue }}</p>
             
-            <p style="color: rgb(209, 29, 29);" id="time">{{ event.date }}</p>
-            <p id="description">{{ event.description }}</p>
+            <p style="color: rgb(209, 29, 29);" id="time">Start Date : {{ event.date }}</p>
+            <p style="color: rgb(248, 116, 0);" id="time">End Date : {{ event.end }}</p>
+            <p id="description" style="color: rgb(82, 134, 83);">Description : {{ event.description }}</p>
             <p id="more">More Details:{{event.moredetails}}</p>
             
           </div>
@@ -264,7 +265,7 @@
             <!-- Tickets will be added here by JavaScript -->
           </div>
           <div>
-          <button type="button" id="add-ticket" class="btn btn-secondary">Add Ticket</button>
+          <br><button type="button" id="add-ticket" class="btn btn-secondary">Add Ticket</button>
         </div>
         </form>
       </div>
@@ -294,10 +295,9 @@
 <!-- Existing Scripts... -->
 
 <script>
-  // Declare eventData globally
-  
+  var eventData = { keep_ticket_ids: [] };
+
   $(document).ready(function () {
-    
       var eventId;
 
       $('#add-button').click(function () {
@@ -361,146 +361,120 @@
           });
       });
 
-    
+      function addTicketField(ticket = {}) {
+          var ticketDiv = $('<div class="ticket"></div>');
+          var ticketTypeInput = $('<input type="text" class="form-control" name="ticket_type[]" placeholder="Ticket Type">');
+          var priceInput = $('<input type="number" class="form-control" name="price[]" placeholder="Price">');
+          var availableTicketsInput = $('<input type="number" class="form-control" name="available_tickets[]" placeholder="Available Tickets">');
+          var removeButton = $('<button type="button" class="btn btn-danger">Remove</button>');
 
-      var eventData = { keep_ticket_ids: [] };
-var eventId;
+          if (ticket.ticket_type) ticketTypeInput.val(ticket.ticket_type);
+          if (ticket.price) priceInput.val(ticket.price);
+          if (ticket.available_tickets) availableTicketsInput.val(ticket.available_tickets);
 
-$(document).ready(function () {
-    console.log($);  // Logs the jQuery function
-    console.log("Script loaded!");
+          removeButton.click(function () {
+              if (ticket.id) {
+                  var index = eventData.keep_ticket_ids.indexOf(ticket.id);
+                  if (index > -1) {
+                      eventData.keep_ticket_ids.splice(index, 1);
+                  }
+                  console.log("Updated keep_ticket_ids:", eventData.keep_ticket_ids);
+              }
+              ticketDiv.remove();
+          });
 
-    // Function to initialize eventData
-    function initializeEventData() {
-        return { keep_ticket_ids: [] };
-    }
+          ticketDiv.append(ticketTypeInput);
+          ticketDiv.append(priceInput);
+          ticketDiv.append(availableTicketsInput);
+          ticketDiv.append(removeButton);
 
-    // Function to add a ticket field
-    function addTicketField(ticket = {}) {
-        if (!eventData.keep_ticket_ids) {
-            // console.error("eventData.keep_ticket_ids is undefined. Initializing eventData.");
-            eventData = initializeEventData();
-            console.log("initialized");
-        }
+          $('#modify-tickets').append(ticketDiv);
+      }
 
-        var ticketDiv = $('<div class="ticket"></div>');
-        var ticketTypeInput = $('<input type="text" class="form-control" name="ticket_type[]" placeholder="Ticket Type">');
-        var priceInput = $('<input type="number" class="form-control" name="price[]" placeholder="Price">');
-        var availableTicketsInput = $('<input type="number" class="form-control" name="available_tickets[]" placeholder="Available Tickets">');
-        var removeButton = $('<button type="button" class="btn btn-danger">Remove</button>');
+      $('.modify-event').click(function () {
+          eventId = $(this).data('event-id');
+          
+          // Move eventData initialization here to prevent overwriting
+          eventData = {
+              keep_ticket_ids: []
+          };
 
-        // If a ticket is provided, set the values of the inputs
-        if (ticket.ticket_type) ticketTypeInput.val(ticket.ticket_type);
-        if (ticket.price) priceInput.val(ticket.price);
-        if (ticket.available_tickets) availableTicketsInput.val(ticket.available_tickets);
+          $.ajax({
+              url: '/admin/concerts/modify/' + eventId,
+              method: 'GET',
+              dataType: 'json',
+              success: function (data) {
+                  if (data.success) {
+                      // Preserve existing keep_ticket_ids
+                      eventData.keep_ticket_ids = eventData.keep_ticket_ids || [];
+                      eventData.keep_ticket_ids.push(...data.event.tickets.map(ticket => ticket.id));
 
-        // When the remove button is clicked, remove the ticket div
-        removeButton.click(function () {
-            // If the ticket has an id, add it to the keep_ticket_ids array
-            if (ticket.id) {
-                eventData.keep_ticket_ids.push(ticket.id);
-                console.log("Updated keep_ticket_ids:", eventData.keep_ticket_ids);
-            }
-            // Remove the ticket div
-            ticketDiv.remove();
-        });
+                      $('#modify-form input[name="name"]').val(data.event.name);
+                      $('#modify-form input[name="venue"]').val(data.event.venue);
+                      $('#modify-form input[name="date"]').val(moment(data.event.date).format('YYYY-MM-DDTHH:mm'));
+                      $('#modify-form input[name="end"]').val(moment(data.event.end).format('YYYY-MM-DDTHH:mm'));
+                      $('#modify-form textarea[name="description"]').val(data.event.description);
+                      $('#modify-form textarea[name="moredetails"]').val(data.event.moredetails);
 
-        // Add the inputs and button to the ticket div
-        ticketDiv.append(ticketTypeInput);
-        ticketDiv.append(priceInput);
-        ticketDiv.append(availableTicketsInput);
-        ticketDiv.append(removeButton);
+                      $('#modify-tickets .ticket').remove();
 
-        // Add the ticket div to the form
-        $('#modify-tickets').append(ticketDiv);
-    }
+                      for (var i = 0; i < data.event.tickets.length; i++) {
+                          addTicketField(data.event.tickets[i]);
+                      }
+                  } else {
+                      alert('Failed to get event details');
+                  }
+              },
+              error: function () {
+                  alert('Failed to get event details');
+              }
+          });
+      });
 
-    // When a modify button is clicked
-    $('.modify-event').click(function () {
-        eventId = $(this).data('event-id');
-        // Use AJAX to get the current details of the event from the server
-        $.get('/admin/concerts/modify/' + eventId, function (data) {
-            eventData = initializeEventData();  // Reset eventData with an empty keep_ticket_ids array
-            if (data.success) {
-                eventData = data || initializeEventData();  // Update the eventData variable
-                // Populate the form fields in the modify modal with the event details
-                $('#modify-form input[name="name"]').val(data.event.name);
-                $('#modify-form input[name="venue"]').val(data.event.venue);
-                $('#modify-form input[name="date"]').val(moment(data.event.date).format('YYYY-MM-DDTHH:mm'));
-                $('#modify-form input[name="end"]').val(moment(data.event.end).format('YYYY-MM-DDTHH:mm'));
-                $('#modify-form textarea[name="description"]').val(data.event.description);
-                $('#modify-form textarea[name="moredetails"]').val(data.event.moredetails);
+      $(document).on('click', '#add-ticket', function () {
+          console.log("Add Ticket button clicked!");
+          addTicketField();
+      });
 
-                // Remove all current ticket fields
-                $('#modify-tickets .ticket').remove();
+      $('#confirm-modify').click(function () {
+          var formElement = document.querySelector('#modify-form');
+          var formData = new FormData(formElement);
+          var data = {};
+          var tickets = [];
 
-                // Add a ticket field for each ticket, passing keep_ticket_ids array
-                for (var i = 0; i < data.event.tickets.length; i++) {
-                    addTicketField(data.event.tickets[i], eventData.keep_ticket_ids);
-                }
-            } else {
-                alert('Failed to get event details');
-            }
-        });
-    });
+          for (var pair of formData.entries()) {
+              if (pair[0].startsWith('ticket_type') || pair[0].startsWith('price') || pair[0].startsWith('available_tickets')) {
+                  var index = tickets.length - 1;
+                  if (pair[0].startsWith('ticket_type')) {
+                      tickets.push({});
+                      index++;
+                  }
+                  tickets[index][pair[0].replace('[]', '')] = pair[1];
+              } else {
+                  data[pair[0]] = pair[1];
+              }
+          }
 
-    // When the add ticket button is clicked, add a new ticket field
-    $(document).on('click', '#add-ticket', function () {
-        console.log("Add Ticket button clicked!");
-        addTicketField();
-    });
+          data['tickets'] = tickets;
+          data['keep_ticket_ids'] = eventData.keep_ticket_ids;
 
-    // When the confirm modify button is clicked
-    $('#confirm-modify').click(function () {
-        var formElement = document.querySelector('#modify-form');
-        var formData = new FormData(formElement);
-        var data = {};
-        var tickets = [];
-
-        // Convert formData to JSON object
-        for (var pair of formData.entries()) {
-            if (pair[0].startsWith('ticket_type') || pair[0].startsWith('price') || pair[0].startsWith('available_tickets')) {
-                var index = tickets.length - 1;
-                if (pair[0].startsWith('ticket_type')) {
-                    tickets.push({});
-                    index++;
-                }
-                tickets[index][pair[0].replace('[]', '')] = pair[1];
-            } else {
-                data[pair[0]] = pair[1];
-            }
-        }
-
-        data['tickets'] = tickets;
-
-        // Add the keep_ticket_ids array to the data
-        data['keep_ticket_ids'] = eventData.keep_ticket_ids;
-
-        $.ajax({
-            url: '/admin/concerts/modify/' + eventId,
-            type: 'POST',
-            contentType: 'application/json',
-            data: JSON.stringify(data),
-            dataType: 'json',
-            success: function (data) {
-                if (data.success) {
-                    location.reload();
-                } else {
-                    alert('Failed to modify event');
-                }
-            }
-        });
-    });
-});
-
-
-
-
+          $.ajax({
+              url: '/admin/concerts/modify/' + eventId,
+              type: 'POST',
+              contentType: 'application/json',
+              data: JSON.stringify(data),
+              dataType: 'json',
+              success: function (data) {
+                  if (data.success) {
+                      location.reload();
+                  } else {
+                      alert('Failed to modify event');
+                  }
+              }
+          });
+      });
   });
 </script>
-
-
-      
 
 </body>
 </html>
