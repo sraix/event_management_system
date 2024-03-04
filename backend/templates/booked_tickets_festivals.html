@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Booked Tickets</title>
+    <!-- Add Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <!-- Add your custom styles if needed -->
+    <style>
+        /* Add your custom styles here */
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .container {
+            margin-top: 50px;
+        }
+
+        #back-button {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+        }
+
+        .btn-primary {
+            background-color: #007bff;
+            border-color: #007bff;
+        }
+
+        .btn-primary:hover {
+            background-color: #0056b3;
+            border-color: #0056b3;
+        }
+
+        .center-card {
+            display: flex;
+            justify-content: center;
+            align-items: start;
+            height: 100vh;
+        }
+
+        .custom-card {
+            background-color: #3498db; /* Change this to your preferred color */
+            max-width: 25rem;
+        }
+
+        .custom-card-header {
+            font-size: 1.5rem; /* Adjust the font size for the card header */
+        }
+
+        /* Add spacing between table cells */
+        .table td,
+        .table th {
+            padding: 0.75rem;
+        }
+
+        /* Increase padding for the card body */
+        .card-body {
+            padding: 1.25rem;
+        }
+    </style>
+</head>
+<body>
+    <a href="/admin" class="btn btn-primary" id="back-button">Back</a>
+
+    <div class="container mt-5">
+        <h3 style="font-family: Verdana; color: #5bdc95;" class="text-center mb-4">Booked Tickets</h3>
+        {% if data %}
+            <table class="table table-hover table-bordered">
+                <thead class="thead-dark">
+                    <tr>
+                        <th>Booking ID</th>
+                        <th>User Name</th>
+                        <th>Event Name</th>
+                        <th>Ticket Type</th>
+                        <th>Booked On</th>
+                        <th>Number of Tickets</th>
+                        <th>Total Price(Rs.)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for booking in data %}
+                        <tr>
+                            <td>{{ booking.booking_id }}</td>
+                            <td>{{ booking.user_name }}</td>
+                            <td>{{ booking.event_name }}</td>
+                            <td>{{ booking.ticket_type }}</td>
+                            <td>{{ booking.booking_date }}</td>
+                            <td>{{ booking.number_of_tickets }}</td>
+                            <td>{{ booking.total_price }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+        <div class="center-card">
+            <div class="card text-white custom-card" style="max-width: 18rem;">
+                <div class="card-header"><strong>No tickets booked!</strong></div>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- Add Bootstrap JS and Popper.js if needed -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

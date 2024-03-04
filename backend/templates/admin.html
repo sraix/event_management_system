@@ -5,7 +5,7 @@
   <meta charset="utf-8">
   <meta content="width=device-width, initial-scale=1.0" name="viewport">
 
-  <title>Admin-Eventify</title>
+  <title>Admin | Eventify</title>
   <meta content="" name="description">
   <meta content="" name="keywords">
 
@@ -101,7 +101,7 @@
           </a>
         </li>
         <li>
-          <a href="/admin/festivals">
+          <a href="/admin/festival">
             <i class="bi bi-circle"></i><span>Festivals</span>
           </a>
         </li>
@@ -124,17 +124,17 @@
       </a>
       <ul id="forms-nav1" class="nav-content collapse " data-bs-parent="#sidebar-nav">
         <li>
-          <a href="forms-elements.html">
+          <a href="/admin/booked_tickets/concerts">
             <i class="bi bi-circle"></i><span>Concerts</span>
           </a>
         </li>
         <li>
-          <a href="forms-layouts.html">
+          <a href="/admin/booked_tickets/festivals">
             <i class="bi bi-circle"></i><span>Festivals</span>
           </a>
         </li>
         <li>
-          <a href="forms-editors.html">
+          <a href="/admin/booked_tickets/others">
             <i class="bi bi-circle"></i><span>Others</span>
           </a>
         </li>
@@ -253,14 +253,15 @@
                       <i class="bi bi-cart"></i>
                     </div>
                     <div class="ps-3">
-                      <h6>145</h6>
+                      <h6>{{ total_tickets_booked }}</h6>
 
                     </div>
                   </div>
                 </div>
 
               </div>
-            </div><!-- End Sales Card -->
+            </div>
+<!-- End Sales Card -->
 
             <!-- Revenue Card -->
             <div class="col-xxl-4 col-md-6">
@@ -272,10 +273,10 @@
 
                   <div class="d-flex align-items-center">
                     <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
-                      <i class="bi bi-currency-dollar"></i>
+                      <i class="bi bi-currency-rupee"></i>
                     </div>
                     <div class="ps-3">
-                      <h6>$3,264</h6>
+                      <h6>{{ total_revenue_earned }}</h6>
                       
 
                     </div>
@@ -300,7 +301,7 @@
                       <i class="bi bi-people"></i>
                     </div>
                     <div class="ps-3">
-                      <h6>1244</h6>
+                      <h6>{{ total_registered_users }}</h6>
 
                     </div>
                   </div>
@@ -316,65 +317,36 @@
             <!-- Recent Sales -->
             <div class="col-12">
               <div class="card recent-sales overflow-auto">
-
-                
-
-                <div class="card-body">
-                  <h5 class="card-title">Recent Bookings <span></h5>
-
-                  <table class="table table-borderless datatable">
-                    <thead>
-                      <tr>
-                        <th scope="col">name</th>
-                        <th scope="col">email</th>
-                        <th scope="col">type</th>
-                        <th scope="col">event</th>
-                        <th scope="col">quantity</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr>
-                        <th scope="row"><a href="#">#2457</a></th>
-                        <td>Brandon Jacob</td>
-                        <td><a href="#" class="text-primary">At praesentium m  sd as d asd  asdas d asd as das</a></td>
-                        <td>$55</td>
-                        <td>$165</td>
-                      </tr>
-                      <tr>
-                        <th scope="row"><a href="#">#2147</a></th>
-                        <td>Bridie Kessler</td>
-                        <td><a href="#" class="text-primary">Blanditiis dolor omnis similique</a></td>
-                        <td>$47</td>
-                        <td>$165</td>
-                      </tr>
-                      <tr>
-                        <th scope="row"><a href="#">#2049</a></th>
-                        <td>Ashleigh Langosh</td>
-                        <td><a href="#" class="text-primary">At recusandae consectetur</a></td>
-                        <td>$147</td>
-                        <td>$165</td>
-                      </tr>
-                      <tr>
-                        <th scope="row"><a href="#">#2644</a></th>
-                        <td>Angus Grady</td>
-                        <td><a href="#" class="text-primar">Ut voluptatem id earum et</a></td>
-                        <td>$67</td>
-                        <td>$165</td>
-                      </tr>
-                      <tr>
-                        <th scope="row"><a href="#">#2644</a></th>
-                        <td>Raheem Lehner</td>
-                        <td><a href="#" class="text-primary">Sunt similique distinctio</a></td>
-                        <td>$165</td>
-                        <td>$165</td>
-                      </tr>
-                    </tbody>
-                  </table>
-
-                </div>
-
+                  <div class="card-body">
+                      <h5 class="card-title">Recent Bookings</h5>
+          
+                      <table class="table table-borderless datatable">
+                        <thead>
+                            <tr>
+                                <th scope="col">User Name</th>
+                                <th scope="col">Event Type</th>
+                                <th scope="col">Event Name</th>
+                                <th scope="col">Ticket Type</th>
+                                <th scope="col">Booked On</th>
+                                <th scope="col">Number of Tickets</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for booking in data %}
+                                <tr>
+                                    <td>{{ booking.user_name }}</td>
+                                    <td>{{ booking.event_type }}</td>
+                                    <td>{{ booking.event_name }}</td>
+                                    <td>{{ booking.ticket_type }}</td>
+                                    <td>{{ booking.booking_date }}</td>
+                                    <td>{{ booking.number_of_tickets }}</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                  </div>
               </div>
-            </div><!-- End Recent Sales -->
+          </div><!-- End Recent Sales -->
 
            
 
