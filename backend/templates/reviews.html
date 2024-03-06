@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reviews</title>
+    <!-- Include Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Include Animate.css for animations -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            font-family: 'Verdana';
+        }
+        .full-width {
+            width: 100vw;
+            box-sizing: border-box;
+        }
+        .row {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-around; /* Adjusted to center tiles */
+            margin-top: 20px; /* Increased the margin between title and tiles */
+        }
+        .tile {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            border: 1px solid #ddd;
+            box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
+            background: #f9f9f9;
+            border-radius: 15px;
+            padding: 10px;
+            transition: all 0.3s ease;
+            margin: 20px; /* Increased the margin between tiles */
+            width: 100%; /* Adjusted tile width */
+        }
+        .tile:hover {
+            box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.2); /* Add a darker shadow on hover */
+            transform: scale(1.02); /* Slightly enlarge the tile on hover */
+        }
+        .button-container {
+            display: flex;
+            justify-content: center;
+            margin-top: 10px; /* Add some gap above the button */
+        }
+        #back-button {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+        }
+        #add-button {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            font-size: 2em; /* Increase the font size */
+            padding: 10px 20px; /* Increase the padding */
+        }
+        .section-title {
+            margin-top: 50px; /* Add some gap from the top */
+            text-align: center;
+        }
+        .flash-message {
+            text-align: center;
+            padding: 10px;
+            background-color: #99f1b3; /* Red background color */
+            color: #000000; /* White text color */
+            display: none;
+            margin-top: 20px; /* Adjusted margin from the top */
+        }
+    </style>
+</head>
+<body>
+    <a href="/user" class="btn btn-primary" id="back-button">Back</a>
+    
+    <section id="events" class="services section-bg full-width">
+        <div class="container" data-aos="fade-up">
+            <div class="section-title">
+                <h2>Reviews</h2>
+            </div>
+            <div class="row">
+                {% for review in reviews %}
+                    <div class="col-md-12">
+                        <div class="tile d-flex align-items-stretch mt-4 mt-lg-0" data-aos="zoom-in" data-aos-delay="300">
+                            <div class="content">
+                                <div>
+                                    <h4 style="color: rgb(0, 128, 255);" id="event-name">{{ review.event.name }}</h4><br>
+                                    <p style="color: green;" id="venue">Rating: {{ review.rating }}</p>
+                                    <p style="color: rgb(248, 116, 0);" id="time">{{ review.review_text }}</p>
+                                </div>
+                                <div class="button-container">
+                                    <form method="POST" action="{{ url_for('delete_review', review_id=review.id) }}">
+                                        <button type="submit" class="btn btn-danger">Delete</button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </section>
+
+    <!-- Flash message section -->
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            <div class="flash-message">
+                <strong>{{ messages[0] }}</strong>
+            </div>
+        {% endif %}
+    {% endwith %}
+    
+    <!-- Include Bootstrap JavaScript -->
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+    <!-- JavaScript for showing/hiding flash message -->
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            var flashMessage = document.querySelector('.flash-message');
+
+            // Show the flash message if there are no reviews
+            {% if not has_reviews %}
+                flashMessage.style.display = 'block';
+            {% endif %}
+        });
+    </script>
+</body>
+</html>
