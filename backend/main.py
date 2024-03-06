@@ -257,8 +257,7 @@ def book_ticket(event_id):
 
     else:
         flash('Not enough tickets available.', 'error')
-        return redirect(url_for('concerts'))
-
+        return redirect(request.referrer)
 
 @app.route('/cancel_booking/<int:booking_id>', methods=['POST'])
 @login_required
@@ -1002,5 +1001,40 @@ def booked():
 
 def get_recent_bookings():
     return Booking.query.order_by(Booking.date.desc()).limit(5).all()
+
+
+@app.route('/admin/reviews/concerts')
+@login_required
+def reviews_concerts():
+    return reviews_by_event_type('concerts')
+
+@app.route('/admin/reviews/festivals')
+@login_required
+def reviews_festivals():
+    return reviews_by_event_type('festivals')
+
+@app.route('/admin/reviews/others')
+@login_required
+def reviews_others():
+    return reviews_by_event_type('others')
+
+def reviews_by_event_type(event_type):
+    # Query the database for all reviews of the specified event type
+    reviews = Review.query.join(Event).join(EventCategory).filter(EventCategory.category_name == event_type)
+
+    # Prepare the data for the template
+    data = []
+    for review in reviews:
+        data.append({
+            'review_id': review.id,
+            'user_name': review.user.name if review.user else '',  # Check if user is not None before accessing name
+            'event_name': review.event.name if review.event else '',  # Check if event is not None before accessing name
+            'review_date': review.review_date,
+            'rating': review.rating,
+            'review_text': review.review_text
+        })
+
+    return render_template(f'reviews_{event_type}.html', data=data)
+
 
 app.run(debug=True)
