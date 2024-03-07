@@ -384,18 +384,7 @@ def reviews():
 
     return render_template('reviews.html', reviews=reviews, has_reviews=has_reviews)
 
-# @app.route('/get_reviews', methods=['GET'])
-# @login_required
-# def get_reviews():
-#     # Get the bookings from the database
-#     bookings = Booking.query.filter_by(user_id=current_user.id).all()
-   
 
-#     # Convert the bookings to a list of dictionaries
-#     bookings_list = [{'id': booking.id, 'event': booking.event.name, 'ticket_type': booking.ticket.ticket_type if booking.ticket else 'N/A', 'number_of_tickets': booking.number_of_tickets} for booking in bookings]
-
-#     # Return the bookings as JSON
-#     return jsonify(bookings_list)
 
 @app.route('/delete_review/<int:review_id>', methods=['POST'])
 @login_required
