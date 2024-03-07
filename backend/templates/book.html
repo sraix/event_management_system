@@ -122,19 +122,10 @@
         <div class="container" data-aos="fade-up">
 
             <div class="section-title">
-                <h2>Events</h2>
-                <p>Explore all the different Events!</p>
+                <h2 style="color: chocolate;">Events</h2>
+                <p style="color: rgb(34, 205, 71);">Explore all the different Events!</p>
             </div>
-             <!-- Flash Message Section -->
-    <div class="container mt-4">
-        {% with messages = get_flashed_messages() %}
-        {% if messages %}
-        <div class="alert alert-danger">
-            {{ messages[0] }}
-        </div>
-        {% endif %}
-        {% endwith %}
-    </div>
+            
 
             {% if events %}
             <div class="row">
@@ -150,18 +141,21 @@
                         </div>
 
                         <div class="button-container" style="display: flex; justify-content: center;">
-                            <!-- Modify the "Book Ticket" button to open a modal -->
-                            {% if total_available_tickets.get(event.id) and total_available_tickets[event.id] > 0 %}
-                            <button type="button" class="btn btn-primary" data-toggle="modal"
-                                data-target="#bookingModal{{event.id}}">
-                                Book Ticket
-                            </button>
-                            {% else %}
-                            <button type="button" class="btn btn-primary" data-toggle="modal"
-                                data-target="#alertModal">
-                                Book Ticket
-                            </button>
-                            {% endif %}
+                            <!-- Modify the "Book Ticket" button to check if the event has ended -->
+{% if event.end < current_time %}
+<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#alertModal" disabled>
+    Event Ended
+</button>
+{% elif total_available_tickets.get(event.id) and total_available_tickets[event.id] > 0 %}
+<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#bookingModal{{event.id}}">
+    Book Ticket
+</button>
+{% else %}
+<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#alertModal">
+    Book Ticket
+</button>
+{% endif %}
+
 
                             <!-- Modify the "More Details" button to open the new modal -->
                             <a href="" class="btn btn-secondary" data-toggle="modal"
@@ -252,7 +246,7 @@
             </div>
             {% else %}
             <!-- Display a message when there are no events -->
-            <div class="alert alert-info mt-4">
+            <div class="alert alert-info mt-4 text-center">
                 No events are available at the moment. Check back later!
             </div>
             {% endif %}

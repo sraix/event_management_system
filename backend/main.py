@@ -225,6 +225,11 @@ def user():
 def book_ticket(event_id):
     # Get the event and the number of tickets from the form data
     event = Event.query.get(event_id)
+
+    if event is None or event.end < datetime.now():
+        flash('This event has ended. You cannot book tickets for it.', 'error')
+        return redirect(request.referrer)
+    
     ticket_id = request.form.get('ticket_type')
     ticket = Ticket.query.get(ticket_id)
     number_of_tickets = request.form.get('number_of_tickets')
@@ -293,7 +298,7 @@ def concerts():
     tickets_json = json.dumps([{'id': ticket.id, 'price': str(ticket.price), 'available_tickets': ticket.available_tickets} for ticket in tickets])
 
     # Pass the total_available_tickets dictionary to the template
-    return render_template('book.html', events=concerts, tickets=tickets, tickets_json=tickets_json, total_available_tickets=total_available_tickets)
+    return render_template('book.html', events=concerts, tickets=tickets, tickets_json=tickets_json, total_available_tickets=total_available_tickets,current_time=datetime.now())
 
 @app.route('/user/festivals')
 @login_required
@@ -310,7 +315,7 @@ def festivals():
     tickets_json = json.dumps([{'id': ticket.id, 'price': str(ticket.price), 'available_tickets': ticket.available_tickets} for ticket in tickets])
 
     # Pass the total_available_tickets dictionary to the template
-    return render_template('book.html', events=festivals, tickets=tickets, tickets_json=tickets_json, total_available_tickets=total_available_tickets)
+    return render_template('book.html', events=festivals, tickets=tickets, tickets_json=tickets_json, total_available_tickets=total_available_tickets,current_time=datetime.now())
 
 @app.route('/user/others')
 @login_required
@@ -327,7 +332,7 @@ def others():
     tickets_json = json.dumps([{'id': ticket.id, 'price': str(ticket.price), 'available_tickets': ticket.available_tickets} for ticket in tickets])
 
     # Pass the total_available_tickets dictionary to the template
-    return render_template('book.html', events=others, tickets=tickets, tickets_json=tickets_json, total_available_tickets=total_available_tickets)
+    return render_template('book.html', events=others, tickets=tickets, tickets_json=tickets_json, total_available_tickets=total_available_tickets,current_time=datetime.now())
 
 
 @app.route('/user/booking')
@@ -375,7 +380,7 @@ def reviews():
     has_reviews = bool(reviews)
 
     if not has_reviews:
-        flash('No reviews available!!', 'warning')
+        flash('You have no Reviews!!', 'warning')
 
     return render_template('reviews.html', reviews=reviews, has_reviews=has_reviews)
 
@@ -490,9 +495,12 @@ def logout():
 def concerts1():
     # Assuming 'Concerts' category has id=1
     events = Event.query.filter_by(category_id=1).all()
+    
 
     # Get the tickets for each event
     tickets = {event.id: Ticket.query.filter_by(event_id=event.id).all() for event in events}
+    if not events:
+        flash('No concerts are available, Consider adding one...!', 'info')
 
     return render_template('adminconcert.html', events=events, tickets=tickets)
 
@@ -641,6 +649,8 @@ def festival1():
 
     # Get the tickets for each event
     tickets = {event.id: Ticket.query.filter_by(event_id=event.id).all() for event in events}
+    if not events:
+        flash('No festivals are available, Consider adding one...!', 'info')
 
     return render_template('adminfestival.html', events=events, tickets=tickets)
 
@@ -788,6 +798,8 @@ def others1():
 
     # Get the tickets for each event
     tickets = {event.id: Ticket.query.filter_by(event_id=event.id).all() for event in events}
+    if not events:
+        flash('No other events are available, Consider adding one...!', 'info')
 
     return render_template('adminothers.html', events=events, tickets=tickets)
 
@@ -961,6 +973,7 @@ def booked_tickets_others():
 def booked_tickets_by_event_type(event_type):
     # Query the database for all bookings of the specified event type
     bookings = Booking.query.join(Event).join(EventCategory).filter(EventCategory.category_name == event_type)
+    
 
     # Prepare the data for the template
     data = []
@@ -975,6 +988,9 @@ def booked_tickets_by_event_type(event_type):
             'number_of_tickets': booking.number_of_tickets,
             'total_price': booking.total_price
         })
+
+    if not data:
+        flash('No bookings are made...!', 'info')
 
     return render_template(f'booked_tickets_{event_type}.html', data=data)
 
@@ -1033,8 +1049,45 @@ def reviews_by_event_type(event_type):
             'rating': review.rating,
             'review_text': review.review_text
         })
+    if not data:
+        flash('No reviews are posted.', 'info')
 
     return render_template(f'reviews_{event_type}.html', data=data)
+
+
+
+@app.route('/admin/users')
+@login_required
+def admin_users():
+    users = User.query.all()
+
+    data = []
+    for user in users:
+        data.append({
+            'user_id': user.id,
+            'user_name': user.name,
+            'user_email': user.email,
+            'registered_on': user.registeredon.strftime('%Y-%m-%d %H:%M:%S') if user.registeredon else ''
+        })
+
+    if not data:
+        flash('No users available.', 'info')
+
+    return render_template('registered_users.html', data=data)
+
+@app.route('/admin/users/delete/<int:user_id>', methods=['POST'])
+@login_required  # Add the appropriate login_required decorator
+def delete_user(user_id):
+    user = User.query.get(user_id)
+
+    if user:
+        db.session.delete(user)
+        db.session.commit()
+        flash('User deleted successfully!', 'success')
+    else:
+        flash('User not found!', 'error')
+
+    return redirect(url_for('admin_users'))  # Redirect to the user directory page
 
 
 app.run(debug=True)

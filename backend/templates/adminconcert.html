@@ -107,9 +107,19 @@
 <section id="events" class="services section-bg full-width">
   <div class="container" data-aos="fade-up">
     <div class="section-title">
-      <h2>Concerts</h2>
+      <h2 style="color: chocolate;">Concerts</h2>
       
     </div>
+    <div class="container mt-4 text-center">
+      {% with messages = get_flashed_messages() %}
+          {% if messages %}
+              <div class="alert alert-info">
+                  {{ messages[0] }}
+              </div>
+          {% endif %}
+      {% endwith %}
+  </div>
+  
     <div class="row">
       {% for event in events %}
       <div class="tile d-flex align-items-stretch mt-4 mt-lg-0" data-aos="zoom-in" data-aos-delay="300">
