@@ -61,26 +61,22 @@
 <body>
 
   <!-- ======= Header ======= -->
-  <header id="header" class="fixed-top">
+  <header style="background-color: rgb(205, 255, 248);" id="header" class="fixed-top">
     <div class="container d-flex align-items-center justify-content-between">
 
-      <h1 class="logo">EventiFy</h1>
+      <h1 s style="color:rgb(0, 0, 0); font-weight: bolder;" class="logo">EventiFy</h1>
       <!-- Uncomment below if you prefer to use an image logo -->
       <!-- <a href="index.html" class="logo"><img src="static/assets/img/logo.png" alt="" class="img-fluid"></a>-->
 
       <nav id="navbar" class="navbar">
         <ul>
-          <li><a class="nav-link scrollto active" href="#">Home</a></li>
-          
-          
-          
-          <li><a class="nav-link scrollto" href="#contact">Contact Us</a></li>
-          
+          <li><a style="font-weight: bold;" class="nav-link scrollto active" href="#">Home</a></li>
+          <li><a style="font-weight: bold;" class="nav-link scrollto" href="#contact">Contact Us</a></li>
         
           
 
 
-          <li class="dropdown"><a href="#"><span>Login</span> <i class="bi bi-chevron-down"></i></a>
+          <li  class="dropdown"><a href="#"><span>Login</span> <i class="bi bi-chevron-down"></i></a>
             <ul>
               <li><a href="/userlogin">User Login</a></li>
               <li><a href="/adminlogin">Admin Login</a></li>
@@ -102,8 +98,9 @@
     <div class="container position-relative" data-aos="fade-up" data-aos-delay="100">
       <div class="row justify-content-center">
         <div class="col-xl-7 col-lg-9 text-center">
-          <h1>Welcome to EventiFy!</h1>
-          <h2>Please login or register as a user to access our platform.</h2>
+          <h1 style="color:deepskyblue">Welcome to  EventiFy!</h1>
+          <h2 style="color: aquamarine;">Please login or register as a user to access our platform.</h2>
+          
         </div>
       </div>
       
@@ -117,36 +114,36 @@
  
  
   <!-- ======= Contact Section ======= -->
-  <section id="contact" class="contact">
+  <section id="contact" class="contact" style="background-image: url('../static/assets/img/wallpaperflare.com_wallpaper(4)(1).jpg'); background-size: cover; background-position: center; background-repeat: no-repeat;">
     <div class="container" data-aos="fade-up">
 
       <div class="section-title">
-        <h2>Contact</h2>
-        <p>If you have any suggestions, questions or need help with something specific, feel free to contact us.</p>
+        <h2 style="color: aquamarine;">Contact Us</h2>
+        <p style="color: rgb(189, 255, 119);">If you have any suggestions, questions or need help with something specific, feel free to contact us.</p>
       </div>
 
       
 
       <div class="row mt-5 justify-content-center">
 
-        <div class="col-lg-2">
-            <div class="info">
+        <div class="col-lg-2" style="background-color:gainsboro ;margin-right: 10px;border-radius: 10px;">
+            <div class="info" style="background: transparent;">
     
                 <div class="email">
                     <i class="bi bi-envelope"></i>
-                    <h4>Email:</h4>
-                    <p>eventify@gmail.com</p>
+                    <h4 style="color: rgb(44, 118, 118);">Email:</h4>
+                    <p><a href="mailto:eventify@gmail.com">eventify@gmail.com</p></a>
                 </div>
     
             </div>
         </div>
     
-        <div class="col-lg-2">
-            <div class="info">
+        <div class="col-lg-2" style="background-color:gainsboro;border-radius: 10px;">
+            <div class="info" style="background: transparent;">
     
-                <div class="phone">
+                <div class="phone" style="margin-bottom: 20px;" >
                     <i class="bi bi-phone"></i>
-                    <h4>Call:</h4>
+                    <h4 style="color: rgb(44, 118, 118);">Call:</h4>
                     <p>+91 8971196685</p>
                     <p>+91 9400420321</p>
                 </div>
@@ -158,7 +155,6 @@
         </div>
   </section>
   <!--End Contact Section-->
-  
  
   
 {% block body %}
@@ -166,24 +162,19 @@
 {% endblock %}
 
 
-<footer>
-    <div class="container d-md-flex py-4">
+<footer class="text-center" style="background-color: rgb(233, 255, 235);">
+  <div class="container d-flex justify-content-center align-items-center py-4">
 
-      <div class="me-md-auto text-center text-md-start">
-        <div class="copyright">
-          &copy; Copyright <strong><span>EventiFy</span></strong>. All Rights Reserved
-        </div>
-        <div class="credits">
-          <!-- All the links in the footer should remain intact. -->
-          <!-- You can delete the links only if you purchased the pro version. -->
-          <!-- Licensing information: https://bootstrapmade.com/license/ -->
-          <!-- Purchase the pro version with working PHP/AJAX contact form: https://bootstrapmade.com/onepage-multipurpose-bootstrap-template/ -->
-          Designed by teamX</a>
-        </div>
+      <div>
+          <div class="copyright">
+              &copy; Copyright <strong><span>EventiFy</span></strong>. All Rights Reserved
+          </div>
+          
       </div>
-      
-    </div>
-  </footer><!-- End Footer -->
+
+  </div>
+</footer><!-- End Footer -->
+
 
   <div id="preloader"></div>
   <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>

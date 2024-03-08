@@ -28,6 +28,12 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
     <style>
+        body {
+        background-image: url('../static/assets/img/abstract-still-life-optical-fiber(1).jpg');
+        background-size: cover;
+        background-repeat: no-repeat;
+        background-attachment: fixed; /* Optional: Keeps the background fixed while scrolling */
+    }
         #back-button {
             position: absolute;
             top: 10px;
@@ -86,13 +92,16 @@
 
     .flash {
         padding: 15px;
-        background-color: #ffa84b;
+        background-color: #ceff9e;
         color: rgb(0, 0, 0);
         margin-bottom: 15px;
         display: flex;
         justify-content: center;
         align-items: center;
         font-size: 1.2em;
+        font-family: Comic Sans MS;
+        
+
     }
 </style>
 </head>
@@ -123,10 +132,13 @@
                     <div class="card-body">
                         
                         <h5 class="card-title">{{ booking.event.name }}</h5><br>
-                        <p class="card-text" style="color: rgb(17, 164, 105);">
+                        <p class="card-text" style="color: rgb(39, 103, 255); font-family:Comic Sans MS ;">
                             Ticket Type : {{ booking.ticket.ticket_type }}<br>
-                            Number of Tickets : {{ booking.number_of_tickets }}
+                           
                         </p>
+                        <p class="card-text" style="color: rgb(17, 164, 105); font-family:Comic Sans MS ;">
+                            Number of Tickets : {{ booking.number_of_tickets }}
+                            </p>
                         <form method="POST" action="{{ url_for('cancel_booking', booking_id=booking.id) }}">
                             <div class="button-container" style="display: flex; justify-content: space-between; align-items: flex-end;">
                                 <button type="submit" class="btn btn-danger">Cancel</button>
@@ -175,14 +187,14 @@
             </div>
             {% endfor %}
             <!-- No Bookings Modal -->
-            <div class="modal fade" id="noBookingsModal" tabindex="-1" role="dialog" aria-labelledby="noBookingsModalLabel" aria-hidden="true">
+            <div  class="modal fade" id="noBookingsModal" tabindex="-1" role="dialog" aria-labelledby="noBookingsModalLabel" aria-hidden="true">
                 <div class="modal-dialog" role="document">
                     <div class="modal-content">
                         <div class="modal-header">
-                            <h5 class="modal-title" id="noBookingsModalLabel">No Bookings</h5>
-                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <h5 style="color: rgb(179, 29, 29);" class="modal-title" id="noBookingsModalLabel">No Bookings</h5>
+                            <!-- <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                 <span aria-hidden="true">×</span>
-                            </button>
+                            </button> -->
                         </div>
                         <div class="modal-body">
                             You have no bookings. Would you like to book a ticket?

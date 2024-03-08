@@ -21,7 +21,7 @@
 
     <!-- Template Main CSS File -->
     <link href="{{ url_for('static', filename='assets/css/style.css') }}" rel="stylesheet">
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    
     <!-- Your existing styles here -->
     <style>
         body,
@@ -29,6 +29,7 @@
             margin: 0;
             padding: 0;
             font-family: 'Verdana';
+            
         }
 
         .full-width {
@@ -122,7 +123,11 @@
         <div class="container" data-aos="fade-up">
 
             <div class="section-title">
-                <h2 style="color: chocolate;">Events</h2>
+                {% if events %}
+        <h2 style="color: chocolate;">{{ events[0].category.category_name }}</h2>
+    {% else %}
+        <h2 style="color: chocolate;">No Events Available</h2>
+    {% endif %}
                 <p style="color: rgb(34, 205, 71);">Explore all the different Events!</p>
             </div>
             
