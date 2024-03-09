@@ -269,6 +269,8 @@ def book_ticket(event_id):
 
 
 
+
+
 @app.route('/cancel_booking/<int:booking_id>', methods=['POST'])
 @login_required
 def cancel_booking(booking_id):

@@ -14,6 +14,12 @@
             padding: 0;
             font-family: 'Verdana';
         }
+        body {
+        background-image: url('../static/assets/img/pawel-czerwinski-OY3slACa3ec-unsplash.jpg');
+        background-size: cover;
+        background-repeat: no-repeat;
+        background-attachment: fixed; /* Optional: Keeps the background fixed while scrolling */
+    }
         .full-width {
             width: 100vw;
             box-sizing: border-box;
@@ -30,7 +36,7 @@
             justify-content: space-between;
             border: 1px solid #ddd;
             box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
-            background: #f9f9f9;
+            background-image: url('../static/assets/img/maxim-berg-ZePAAZDt4XU-unsplash.jpg');
             border-radius: 15px;
             padding: 10px;
             transition: all 0.3s ease;
@@ -70,17 +76,24 @@
             display: none;
             margin-top: 20px; /* Adjusted margin from the top */
         }
+        #header {
+            background-color:transparent /* Adjust the alpha value as needed */
+            
+        }
     </style>
 </head>
 <body>
-    <a href="/user" class="btn btn-primary" id="back-button">Back</a>
+    <header  id="header" class="fixed-top" style="border-color: transparent;">
+        <a href="/user" class="btn btn-primary" id="back-button">Back</a>
     
+    </header>
+   
     <section id="events" class="services section-bg full-width">
         <div class="container" data-aos="fade-up">
             <div class="section-title">
-                <h2 style="color: chocolate;">My Reviews</h2><br>
+                <h2 style="color: rgb(255, 129, 39); font-weight: 500;">My Reviews</h2>
                 
-              </div>
+              </div><br>
             <div class="container mt-4 text-center">
                 {% with messages = get_flashed_messages() %}
                     {% if messages %}
@@ -96,9 +109,9 @@
                         <div class="tile d-flex align-items-stretch mt-4 mt-lg-0" data-aos="zoom-in" data-aos-delay="300">
                             <div class="content">
                                 <div>
-                                    <h4 style="color: rgb(0, 128, 255);" id="event-name">{{ review.event.name }}</h4><br>
-                                    <p style="color: green;" id="venue">Rating: {{ review.rating }}</p>
-                                    <p style="color: rgb(248, 116, 0);" id="time">{{ review.review_text }}</p>
+                                    <h4 style="color: rgb(0, 128, 255); " id="event-name">{{ review.event.name }}</h4><br>
+                                    <p style="color: rgb(0, 217, 255); font: 1.2em monospace;" id="venue">Rating : {{ review.rating }}</p>
+                                    <p style="color: rgb(0, 148, 72); font: 1.1em Comic Sans MS;" id="time">{{ review.review_text }}</p>
                                 </div>
                                 <div class="button-container">
                                     <form method="POST" action="{{ url_for('delete_review', review_id=review.id) }}">

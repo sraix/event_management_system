@@ -29,23 +29,24 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
     <style>
         body {
-        background-image: url('../static/assets/img/abstract-still-life-optical-fiber(1).jpg');
+        background-image: url('../static/assets/img/milad-fakurian-seA-FPPXL-M-unsplash.jpg');
         background-size: cover;
         background-repeat: no-repeat;
         background-attachment: fixed; /* Optional: Keeps the background fixed while scrolling */
     }
-        #back-button {
-            position: absolute;
-            top: 10px;
-            left: 10px;
-        }
-    
+    #back-button {
+    position: fixed;
+    top: 10px;
+    left: 10px;
+    z-index: 1000;
+}
+
         .card {
         transition: transform .2s;
         border: none;
         border-radius: 15px;
         box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
-        background-color: #e0f7fa; /* light blue */
+        background-image: url('../static/assets/img/maxim-berg-ZePAAZDt4XU-unsplash.jpg');
         display: flex;
         flex-direction: column;
         justify-content: space-between; /* Add this line */
@@ -57,7 +58,7 @@
     }
 
     .card-body {
-        padding: 20px;
+        padding: 15px;
     }
 
     .card-title {
@@ -75,12 +76,12 @@
         display: flex;
         justify-content: space-around;
         align-items: flex-end;
-        padding: 10px 0; /* Adds some padding at the top and bottom */
+        padding: 5px 0; /* Adds some padding at the top and bottom */
     }
 
     .btn-danger, .btn-review {
         white-space: nowrap;
-        font-size: 1.2rem;
+        font-size: 1rem;
     }
 
     .row {
@@ -103,10 +104,22 @@
         
 
     }
+    #header {
+            background-color:transparent /* Adjust the alpha value as needed */
+            
+        }
+        .modal-content {
+            background-color: #f7f7f7;
+            background-image: url('../static/assets/img/pawel-czerwinski-1k9lY4WWXJ0-unsplash.jpg');
+        }
 </style>
 </head>
 <body>
-    <a href="/user" class="btn btn-primary" id="back-button">Back</a>
+    
+    <header  id="header" class="fixed-top" style="border-color: transparent;">
+        <a href="/user" class="btn btn-primary" id="back-button">Back</a>
+    
+    </header>
     <div class="section-title" style="margin-top: 50px;" data-aos="fade">
         
             <h2 style="color: chocolate;">My Tickets</h2>
@@ -132,7 +145,7 @@
                     <div class="card-body">
                         
                         <h5 class="card-title">{{ booking.event.name }}</h5><br>
-                        <p class="card-text" style="color: rgb(39, 103, 255); font-family:Comic Sans MS ;">
+                        <p class="card-text" style="color: rgb(39, 103, 255); font-family:Arial">
                             Ticket Type : {{ booking.ticket.ticket_type }}<br>
                            
                         </p>
@@ -187,8 +200,8 @@
             </div>
             {% endfor %}
             <!-- No Bookings Modal -->
-            <div  class="modal fade" id="noBookingsModal" tabindex="-1" role="dialog" aria-labelledby="noBookingsModalLabel" aria-hidden="true">
-                <div class="modal-dialog" role="document">
+            <div  class="modal fade" id="noBookingsModal" tabindex="-1" role="dialog" aria-labelledby="noBookingsModalLabel" aria-hidden="true" >
+                <div class="modal-dialog" role="document" >
                     <div class="modal-content">
                         <div class="modal-header">
                             <h5 style="color: rgb(179, 29, 29);" class="modal-title" id="noBookingsModalLabel">No Bookings</h5>
@@ -200,7 +213,8 @@
                             You have no bookings. Would you like to book a ticket?
                         </div>
                         <div class="modal-footer">
-                            <a href="{{ url_for('user') }}" class="btn btn-primary">Book Now</a>
+                            <a href="{{ url_for('user') }}#events" class="btn btn-primary">Book Now</a>
+
                         </div>
                     </div>
                 </div>

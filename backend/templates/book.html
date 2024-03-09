@@ -117,7 +117,12 @@
         .modal-body select,
         .modal-body p {
             margin-bottom: 15px;
+           
             /* Adjust as needed */
+        }
+        #header {
+            background-color:transparent /* Adjust the alpha value as needed */
+            
         }
     </style>
 
@@ -127,16 +132,19 @@
 
    
 
-    <a href="/user#events" class="btn btn-primary" id="back-button">Back</a>
+    <header  id="header" class="fixed-top" style="border-color: transparent;">
+        <a href="/user#events" class="btn btn-primary" id="back-button">Back</a>
+    </header>
+
 
     <section id="events" class="services section-bg full-width" style="background-image: url('../static/assets/img/codioful-formerly-gradienta-bKESVqfxass-unsplash(1).jpg');background-size: cover;background-position: center;background-attachment: fixed; ">
         <div class="container" data-aos="fade-up">
 
             <div class="section-title">
                 {% if events %}
-        <h2 style="color: chocolate;">{{ events[0].category.category_name }}</h2>
+        <h2 style="color: rgb(255, 130, 40);">{{ events[0].category.category_name }}</h2>
     {% else %}
-        <h2 style="color: chocolate;">No Events Available</h2>
+        <h2 style="color: rgb(255, 126, 34);">No Events Available</h2>
     {% endif %}
                 <p style="color: rgb(34, 205, 71);">Explore all the different Events!</p>
             </div>
@@ -156,11 +164,11 @@
                 <div class="tile d-flex align-items-stretch mt-4 mt-lg-0" data-aos="zoom-in" data-aos-delay="300">
                     <div class="content">
                         <div>
-                            <h4 style="color: rgb(0, 110, 255);" id="event-name">{{ event.name }}</a></h4><br>
-                            <p style="color: green;">Venue : {{ event.venue }}</p>
-                            <p style="color: red;" id="date">On : {{event.date}}</p>
+                            <h4 style="color: rgb(0, 110, 255); font-weight: 500;" id="event-name">{{ event.name }}</a></h4><br>
+                            <p style="color: green; font: 1.1em sans-serif;">Venue : {{ event.venue }}</p>
+                            <p style="color: rgb(0, 117, 138); font: 1.1em monospace;" id="date">On : {{event.date}}</p>
 
-                            <p id="description">{{ event.description }}</p>
+                            <p id="description" style="font-family: Segoe UI; font-weight: 600;">{{ event.description }}</p>
                         </div>
 
                         <div class="button-container" style="display: flex; justify-content: center;">
@@ -193,15 +201,13 @@
                     <div class="modal-dialog modal-lg" role="document">
                         <div class="modal-content">
                             <div class="modal-header">
-                                <h5 class="modal-title" id="detailsModalLabel">More Details for {{ event.name }}</h5>
-                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                    <span aria-hidden="true">×</span>
-                                </button>
+                                <h5 style="font-weight:bold;" class="modal-title" id="detailsModalLabel">More Details for {{ event.name }}</h5>
+                                
                             </div>
 
                             <div class="modal-body">
                                 <!-- Add the details you want to display here -->
-                                <p>{{ event.moredetails }}</p>
+                                <p style="font-weight:200;font-family: Comic Sans MS;">{{ event.moredetails }}</p>
 
                                 <!-- Add more fields as needed -->
                             </div>
@@ -219,11 +225,11 @@
                     <div class="modal-dialog" role="document">
                         <div class="modal-content">
                             <div class="modal-header">
-                                <h5 class="modal-title" id="bookingModalLabel">Book Ticket for {{ event.name }}</h5>
+                                <h5 class="modal-title" id="bookingModalLabel" style="font-weight: bolder;">Book Ticket for {{ event.name }}</h5>
 
-                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <!-- <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                     <span aria-hidden="true"></span>
-                                </button>
+                                </button> -->
                             </div>
 
                             {% if event.tickets|length > 0 %}
@@ -231,7 +237,7 @@
                                 onsubmit="return validateForm()">
 
                                 <div class="modal-body">
-                                    <label for="ticket_type">Ticket Type:</label>
+                                    <label for="ticket_type">Ticket Type : </label>
                                     <select id="ticket_type" name="ticket_type">
                                         {% for ticket in tickets %}
                                         {% if ticket.event_id == event.id %}
@@ -240,11 +246,11 @@
                                         {% endfor %}
                                     </select>
 
-                                    <p id="price">Price: <span id="ticket_price" style="color: green;"></span></p>
-                                    <p id="available_tickets">Available Tickets: <span id="available_ticket_count"
-                                            style="color: red;"></span></p>
+                                    <p id="price">Price : <span id="ticket_price" style="color: rgb(0, 228, 0);"></span></p>
+                                    <p id="available_tickets">Available Tickets : <span id="available_ticket_count"
+                                            style="color: rgb(0, 200, 255);"></span></p>
 
-                                    <label for="number_of_tickets">Number of Tickets:</label>
+                                    <label for="number_of_tickets">Number of Tickets : </label>
                                     <input type="number" id="number_of_tickets" name="number_of_tickets" min="1"
                                         max="{{ event.available_tickets }}">
                                 </div>
