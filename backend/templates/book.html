@@ -24,14 +24,23 @@
     
     <!-- Your existing styles here -->
     <style>
-        body,
+        
         html {
             margin: 0;
             padding: 0;
             font-family: 'Verdana';
             
         }
-
+        body {
+        /* Add your image url */
+        background-image: url('../static/assets/img/codioful-formerly-gradienta-bKESVqfxass-unsplash(1).jpg');
+        /* Set the position to fixed */
+        background-attachment: fixed;
+        /* Set the size to cover */
+        background-size: cover;
+        /* Center the background image */
+        background-position: center;
+    }
         .full-width {
             width: 100vw;
             box-sizing: border-box;
@@ -55,7 +64,7 @@
             border-radius: 15px;
             padding: 10px;
             transition: all 0.3s ease;
-
+            background-image: url('../static/assets/img/maxim-berg-ZePAAZDt4XU-unsplash.jpg');
             /* New property for gap between tiles */
             margin: 20px;
             /* Increase the margin to add more gap between tiles */
@@ -87,6 +96,7 @@
 
         .modal-content {
             background-color: #f7f7f7;
+            background-image: url('../static/assets/img/pawel-czerwinski-1k9lY4WWXJ0-unsplash.jpg');
         }
 
         .modal {
@@ -119,7 +129,7 @@
 
     <a href="/user#events" class="btn btn-primary" id="back-button">Back</a>
 
-    <section id="events" class="services section-bg full-width">
+    <section id="events" class="services section-bg full-width" style="background-image: url('../static/assets/img/codioful-formerly-gradienta-bKESVqfxass-unsplash(1).jpg');background-size: cover;background-position: center;background-attachment: fixed; ">
         <div class="container" data-aos="fade-up">
 
             <div class="section-title">
@@ -130,7 +140,15 @@
     {% endif %}
                 <p style="color: rgb(34, 205, 71);">Explore all the different Events!</p>
             </div>
-            
+            <div class="container mt-4 text-center" style="width: 100vw; display: flex; justify-content: center;">
+                {% with messages = get_flashed_messages() %}
+                    {% if messages %}
+                        <div class="alert alert-success">
+                            {{ messages[0] }}
+                        </div>
+                    {% endif %}
+                {% endwith %}
+            </div>
 
             {% if events %}
             <div class="row">

@@ -220,6 +220,8 @@ def user():
     else:
         return render_template("user.html")
     
+from sqlalchemy import text
+
 @app.route('/book_ticket/<int:event_id>', methods=['POST'])
 @login_required
 def book_ticket(event_id):
@@ -258,11 +260,14 @@ def book_ticket(event_id):
         db.session.commit()
 
         # Redirect the user to the events page
-        return redirect(url_for('user'))
+        flash('Booking Success!!', 'success')
+        return redirect(request.referrer)
 
     else:
         flash('Not enough tickets available.', 'error')
         return redirect(request.referrer)
+
+
 
 @app.route('/cancel_booking/<int:booking_id>', methods=['POST'])
 @login_required
