@@ -31,6 +31,13 @@
         background-repeat: no-repeat;
         background-attachment: fixed; /* Optional: Keeps the background fixed while scrolling */
     }
+    .login-container {
+            max-width: 500px;
+            margin: auto;
+            background-image: url('../static/assets/img/milad-fakurian-HE1_K4_-QT8-unsplash.jpg');
+            background-size: cover;
+            background-repeat: no-repeat;
+        }
     </style>
     <title>User Signup | EventiFy</title>
 </head>
@@ -46,8 +53,10 @@
             <div class="col-md-12 right-box">
                 <div class="row align-items-center">
                     <div class="header-text mb-4">
-                        <h2>Hello</h2>
-                        <p>Welcome to EventiFy!</p>
+                       
+                       
+                        <h2 style="font-family:Tunga;">Hello!</h2>
+                        <p style="font-family:Comic Sans MS;">Welcome to EventiFy!</p>
                     </div>
                     <form action="/signup" method="post">
                     {% include "message.html" %}
@@ -60,6 +69,7 @@
                     <div class="input-group mb-1">
                         <input type="password" name="password" class="form-control form-control-lg bg-light fs-6"  placeholder="Password" required>
                     </div>
+                    <br>
                     <div class="input-group mb-3">
                         <button class="btn btn-lg btn-primary w-100 fs-6">Sign Up</button>
                     </div>
@@ -68,7 +78,7 @@
                     </div>
                 </form>
                     <div class="row">
-                        <small>Already have an account? <a href="userlogin">Log In</a></small>
+                        <p style="font-family:sans-serif;">Already have an account? <a style="font-family: Comic Sans MS;" href="userlogin">Log In</a></a></p>
                     </div>
                 </div>
             </div> 

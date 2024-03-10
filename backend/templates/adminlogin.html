@@ -25,8 +25,17 @@
     <style>
         /* Add this style */
         .login-container {
-            max-width: 500px; /* Adjust this value as needed */
+            max-width: 500px;
             margin: auto;
+            background-image: url('../static/assets/img/milad-fakurian-HE1_K4_-QT8-unsplash.jpg');
+            background-size: cover;
+            background-repeat: no-repeat;
+        }
+        body {
+            background-image: url('../static/assets/img/7636213_3607424(1).jpeg');
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-attachment: fixed; /* Optional: Keeps the background fixed while scrolling */
         }
     </style>
     <title>Admin Login | EventiFy</title>
@@ -43,8 +52,9 @@
             <div class="col-md-12 right-box">
                 <div class="row align-items-center">
                     <div class="header-text mb-4">
-                        <h2>Hello</h2>
-                        <p>We are happy you are back!</p>
+                        <h2 style="font-family:Tunga;">Hello Admin!!</h2>
+                        <p style="font-family:Comic Sans MS;">We are happy you are back!</p>
+                        
                     </div>
                     <form action="/adminlogin" method="POST">
                     {% include "message.html" %}
@@ -54,6 +64,7 @@
                     <div class="input-group mb-1">
                         <input type="password" name="password" class="form-control form-control-lg bg-light fs-6" placeholder="Password" required>
                     </div>
+                    <br>
                     <div class="input-group mb-3">
                         <button class="btn btn-lg btn-primary w-100 fs-6">Log In</button>
                     </div>

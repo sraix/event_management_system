@@ -6,10 +6,11 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from sqlalchemy import create_engine, text
 from datetime import datetime
 from flask import json,jsonify
-from sqlalchemy.exc import SQLAlchemyError
+
 from sqlalchemy import func
 from flask import request, jsonify, render_template
 from datetime import datetime
+import mysql.connector
 
 
 # mydatabase connection
@@ -274,19 +275,23 @@ def book_ticket(event_id):
 @app.route('/cancel_booking/<int:booking_id>', methods=['POST'])
 @login_required
 def cancel_booking(booking_id):
-    # Get the booking from the database
-    booking = Booking.query.get(booking_id)
+    # Create a new MySQL connection
+    cnx = mysql.connector.connect(user='root', password='', host='localhost', database='event_management_system')
 
-    # Check if the booking exists and belongs to the current user
-    if booking is None or booking.user_id != current_user.id:
-        return "Booking not found", 404
+    # Create a new cursor
+    cursor = cnx.cursor()
 
-    # Delete the booking
-    db.session.delete(booking)
-    db.session.commit()
+    # Call the stored procedure
+    cursor.callproc('CancelBooking', args=(booking_id, current_user.id))
+
+    # Commit the changes and close the connection
+    cnx.commit()
+    cnx.close()
 
     # Redirect the user to the bookings page
     return redirect(url_for('user_booking'))
+
+
 
 
 

@@ -36,12 +36,20 @@
   * Author: BootstrapMade.com
   * License: https://bootstrapmade.com/license/
   ======================================================== -->
+    <style>
+      body {
+        background-image: url('../static/assets/img/marcela-laskoski-YrtFlrLo2DQ-unsplash.jpg');
+        background-size: cover;
+        background-repeat: no-repeat;
+        background-attachment: fixed; /* Optional: Keeps the background fixed while scrolling */
+    }
+    </style>
 </head>
 
 <body>
 
   <!-- ======= Header ======= -->
-  <header id="header" class="header fixed-top d-flex align-items-center justify-content-between">
+  <header style="background-color: cornsilk;" id="header" class="header fixed-top d-flex align-items-center justify-content-between">
 
     <div class="d-flex align-items-center">
       <a href="#" class="logo d-flex align-items-center">
@@ -77,16 +85,11 @@
 </header>
 
   <!-- ======= Sidebar ======= -->
-  <aside id="sidebar" class="sidebar">
+  <aside id="sidebar" class="sidebar" style="background-image: url('../static/assets/img/pawel-czerwinski-GFqo8rVmH30-unsplash.jpg');">
 
     <ul class="sidebar-nav" id="sidebar-nav">
 
-      <li class="nav-item">
-        <a class="nav-link " href="#">
-          <i class="bi bi-grid"></i>
-          <span>Dashboard</span>
-        </a>
-      </li><!-- End Dashboard Nav -->
+      
       
      <!-- End Components Nav -->
 
@@ -97,17 +100,17 @@
       <ul id="forms-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
         <li>
           <a href="/admin/concerts">
-            <i class="bi bi-circle"></i><span>Concerts</span>
+            <i   class="bi bi-circle"></i><span style="font-weight: bolder;">Concerts</span>
           </a>
         </li>
         <li>
           <a href="/admin/festival">
-            <i class="bi bi-circle"></i><span>Festivals</span>
+            <i class="bi bi-circle"></i><span style="font-weight: bolder;">Festivals</span>
           </a>
         </li>
         <li>
           <a href="/admin/others">
-            <i class="bi bi-circle"></i><span>Others</span>
+            <i class="bi bi-circle"></i><span style="font-weight: bolder;">Others</span>
           </a>
         </li>
       </ul>
@@ -125,17 +128,17 @@
       <ul id="forms-nav1" class="nav-content collapse " data-bs-parent="#sidebar-nav">
         <li>
           <a href="/admin/booked_tickets/concerts">
-            <i class="bi bi-circle"></i><span>Concerts</span>
+            <i class="bi bi-circle"></i><span style="font-weight: bolder;">Concerts</span>
           </a>
         </li>
         <li>
           <a href="/admin/booked_tickets/festivals">
-            <i class="bi bi-circle"></i><span>Festivals</span>
+            <i class="bi bi-circle"></i><span style="font-weight: bolder;">Festivals</span>
           </a>
         </li>
         <li>
           <a href="/admin/booked_tickets/others">
-            <i class="bi bi-circle"></i><span>Others</span>
+            <i class="bi bi-circle"></i><span style="font-weight: bolder;">Others</span>
           </a>
         </li>
       </ul>
@@ -148,17 +151,17 @@
       <ul id="forms-nav2" class="nav-content collapse " data-bs-parent="#sidebar-nav">
         <li>
           <a href="/admin/reviews/concerts">
-            <i class="bi bi-circle"></i><span>Concerts</span>
+            <i class="bi bi-circle"></i><span style="font-weight: bolder;">Concerts</span>
           </a>
         </li>
         <li>
           <a href="/admin/reviews/festivals">
-            <i class="bi bi-circle"></i><span>Festivals</span>
+            <i class="bi bi-circle"></i><span style="font-weight: bolder;">Festivals</span>
           </a>
         </li>
         <li>
           <a href="/admin/reviews/others">
-            <i class="bi bi-circle"></i><span>Others</span>
+            <i class="bi bi-circle"></i><span style="font-weight: bolder;">Others</span>
           </a>
         </li>
       </ul>
@@ -182,13 +185,8 @@
   <main id="main" class="main">
 
     <div class="pagetitle">
-      <h1>Dashboard</h1>
-      <nav>
-        <ol class="breadcrumb">
-          <li class="breadcrumb-item"><a href="index.html">Home</a></li>
-          <li class="breadcrumb-item active">Dashboard</li>
-        </ol>
-      </nav>
+      <h1 style="color: aqua;">Dashboard</h1>
+      
     </div><!-- End Page Title -->
 
     <section class="section dashboard">
@@ -204,7 +202,7 @@
 
                
 
-                <div class="card-body">
+                <div class="card-body" >
                   <h5 class="card-title">Ticket Booked</span></h5>
 
                   <div class="d-flex align-items-center">
@@ -293,12 +291,12 @@
                         <tbody>
                             {% for booking in data %}
                                 <tr>
-                                    <td>{{ booking.user_name }}</td>
-                                    <td>{{ booking.event_type }}</td>
-                                    <td>{{ booking.event_name }}</td>
-                                    <td>{{ booking.ticket_type }}</td>
-                                    <td>{{ booking.booking_date }}</td>
-                                    <td>{{ booking.number_of_tickets }}</td>
+                                    <td style="font-family: Comic Sans MS;">{{ booking.user_name }}</td>
+                                    <td style="font-family: Comic Sans MS;">{{ booking.event_type }}</td>
+                                    <td style="font-family: Comic Sans MS;">{{ booking.event_name }}</td>
+                                    <td style="font-family: Comic Sans MS;">{{ booking.ticket_type }}</td>
+                                    <td style="font-family: Comic Sans MS;">{{ booking.booking_date }}</td>
+                                    <td style="font-family: Comic Sans MS;">{{ booking.number_of_tickets }}</td>
                                 </tr>
                             {% endfor %}
                         </tbody>
@@ -321,19 +319,7 @@
    
   </main><!-- End #main -->
 
-  <!-- ======= Footer ======= -->
-  <footer id="footer" class="footer">
-    <div class="copyright">
-      &copy; Copyright <strong><span>EventiFy</span></strong>. All Rights Reserved
-    </div>
-    <div class="credits">
-      <!-- All the links in the footer should remain intact. -->
-      <!-- You can delete the links only if you purchased the pro version. -->
-      <!-- Licensing information: https://bootstrapmade.com/license/ -->
-      <!-- Purchase the pro version with working PHP/AJAX contact form: https://bootstrapmade.com/nice-admin-bootstrap-admin-html-template/ -->
-      Designed by teamX
-    </div>
-  </footer><!-- End Footer -->
+ 
 
   <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
 

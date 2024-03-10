@@ -33,7 +33,7 @@
         }
         body {
         /* Add your image url */
-        background-image: url('../static/assets/img/codioful-formerly-gradienta-bKESVqfxass-unsplash(1).jpg');
+        background-image: url('../static/assets/img/danny-howe-gwQAhisLnRA-unsplash.jpg');
         /* Set the position to fixed */
         background-attachment: fixed;
         /* Set the size to cover */
@@ -137,16 +137,16 @@
     </header>
 
 
-    <section id="events" class="services section-bg full-width" style="background-image: url('../static/assets/img/codioful-formerly-gradienta-bKESVqfxass-unsplash(1).jpg');background-size: cover;background-position: center;background-attachment: fixed; ">
+    <section id="events" class="services section-bg full-width" style="background-image: url('../static/assets/img/danny-howe-gwQAhisLnRA-unsplash.jpg');background-size: cover;background-position: center;background-attachment: fixed; ">
         <div class="container" data-aos="fade-up">
 
             <div class="section-title">
                 {% if events %}
-        <h2 style="color: rgb(255, 130, 40);">{{ events[0].category.category_name }}</h2>
+        <h2 style="color: rgb(81, 255, 0);">{{ events[0].category.category_name }}</h2>
     {% else %}
         <h2 style="color: rgb(255, 126, 34);">No Events Available</h2>
     {% endif %}
-                <p style="color: rgb(34, 205, 71);">Explore all the different Events!</p>
+                <p style="color: rgb(121, 255, 226);">Explore all the different Events!</p>
             </div>
             <div class="container mt-4 text-center" style="width: 100vw; display: flex; justify-content: center;">
                 {% with messages = get_flashed_messages() %}
@@ -161,7 +161,7 @@
             {% if events %}
             <div class="row">
                 {% for event in events %}
-                <div class="tile d-flex align-items-stretch mt-4 mt-lg-0" data-aos="zoom-in" data-aos-delay="300">
+                <div class="tile d-flex align-items-stretch mt-4 mt-lg-0" data-aos="zoom-in" >
                     <div class="content">
                         <div>
                             <h4 style="color: rgb(0, 110, 255); font-weight: 500;" id="event-name">{{ event.name }}</a></h4><br>

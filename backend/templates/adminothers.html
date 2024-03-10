@@ -40,10 +40,20 @@
   * License: https://bootstrapmade.com/license/
   ======================================================== -->
   <style>
-    body, html {
+     html {
         margin: 0;
         padding: 0;
         font-family: 'Verdana';
+    }
+    body {
+        /* Add your image url */
+        background-image: url('../static/assets/img/codioful-formerly-gradienta-bKESVqfxass-unsplash(1).jpg');
+        /* Set the position to fixed */
+        background-attachment: fixed;
+        /* Set the size to cover */
+        background-size: cover;
+        /* Center the background image */
+        background-position: center;
     }
     .full-width {
         width: 100vw;
@@ -66,7 +76,7 @@
     border-radius: 15px;
     padding: 10px;
     transition: all 0.3s ease;
-    
+    background-image: url('../static/assets/img/maxim-berg-ZePAAZDt4XU-unsplash.jpg');
 
     /* New property for gap between tiles */
     margin: 20px; /* Increase the margin to add more gap between tiles */
@@ -98,13 +108,22 @@
     font-size: 2em; /* Increase the font size */
     padding: 10px 20px; /* Increase the padding */
 }
+#header {
+            background-color:transparent /* Adjust the alpha value as needed */
+            
+        }
+        .modal-content {
+            background-color: #f7f7f7;
+            background-image: url('../static/assets/img/pawel-czerwinski-1k9lY4WWXJ0-unsplash.jpg');
+        }
 </style>
 </head>
 <body>
-  <a href="/admin" class="btn btn-primary" id="back-button">Back</a>
-  <button class="btn btn-success" id="add-button" data-toggle="modal" data-target="#addModal">+</button> <!-- Replace "Add" with "+" -->
-</div>
-<section id="events" class="services section-bg full-width">
+  <header  id="header" class="fixed-top" style="border-color: transparent;">
+    <a href="/admin" class="btn btn-primary" id="back-button">Back</a>
+    <button class="btn btn-success" id="add-button" data-toggle="modal" data-target="#addModal">+</button> 
+</header>
+<section id="events" class="services section-bg full-width" style="background-image: url('../static/assets/img/codioful-formerly-gradienta-bKESVqfxass-unsplash(1).jpg');background-size: cover;background-position: center;background-attachment: fixed; ">
   <div class="container" data-aos="fade-up">
     <div class="section-title">
       <h2 style="color: chocolate;">Other Events</h2>
@@ -126,11 +145,11 @@
         <div class="content">
           <div>
             <h4 style="color: rgb(0, 128, 255);" id="event-name" >{{ event.name }}</h4><br>
-            <p style="color: green;" id="venue">Venue : {{ event.venue }}</p>
+            <p style="color: rgb(0, 67, 134); font: 1.1em sans-serif;" id="venue">Venue : {{ event.venue }}</p>
             
-            <p style="color: rgb(209, 29, 29);" id="time">Start Date : {{ event.date }}</p>
-            <p style="color: rgb(248, 116, 0);" id="time">End Date : {{ event.end }}</p>
-            <p id="description" style="color: rgb(82, 134, 83);">Description : {{ event.description }}</p>
+            <p style="color: green; font: 1.1em sans-serif;" id="time">Start Date : {{ event.date }}</p>
+            <p style="color: rgb(0, 128, 100); font: 1.1em sans-serif;" id="time">End Date : {{ event.end }}</p>
+            <p id="description" style="color: rgb(0, 172, 164); font-family: Comic Sans MS;">Description : {{ event.description }}</p>
             <p id="more">More Details:{{event.moredetails}}</p>
             
           </div>
@@ -153,54 +172,52 @@
     <div class="modal-content">
       <div class="modal-header">
         <h5 class="modal-title" id="addModalLabel">Add Event</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">×</span>
-        </button>
+        
       </div>
       <div class="modal-body">
         <form id="add-form">
           <div class="form-group">
-            <label for="name">Event Name</label>
+            <label style="font-family: Comic Sans MS;" for="name">Event Name</label>
             <input type="text" class="form-control" id="name" name="name" required>
           </div>
           <div class="form-group">
-            <label for="venue">Venue</label>
+            <label style="font-family: Comic Sans MS;" for="venue">Venue</label>
             <input type="text" class="form-control" id="venue" name="venue" required>
           </div>
           <div class="form-group">
-            <label for="start">Start Date & Time</label>
+            <label style="font-family: Comic Sans MS;" for="start">Start Date & Time</label>
             <input type="datetime-local" class="form-control" id="start" name="start" required>
           </div>
           <div class="form-group">
-            <label for="end">End Date & Time</label>
+            <label style="font-family: Comic Sans MS;" for="end">End Date & Time</label>
             <input type="datetime-local" class="form-control" id="end" name="end" required>
           </div>
           <div class="form-group">
-            <label for="description">Description</label>
+            <label style="font-family: Comic Sans MS;" for="description">Description</label>
             <textarea class="form-control" id="description" name="description" required></textarea>
           </div>
           <div class="form-group">
-            <label for="moredetails">More Details</label>
+            <label style="font-family: Comic Sans MS;" for="moredetails">More Details</label>
             <textarea class="form-control" id="moredetails" name="moredetails" required></textarea>
           </div>
           <!-- Add fields for multiple ticket types and details here -->
           <div id="tickets">
             <div class="ticket">
               <div class="form-group">
-                <label for="ticket_type">Ticket Type</label>
+                <label style="font-family: Comic Sans MS;" for="ticket_type">Ticket Type</label>
                 <input type="text" class="form-control" id="ticket_type" name="ticket_type[]" required>
               </div>
               <div class="form-group">
-                <label for="price">Price</label>
+                <label style="font-family: Comic Sans MS;" for="price">Price</label>
                 <input type="number" class="form-control" id="price" name="price[]" required>
               </div>
               <div class="form-group">
-                <label for="available_tickets">Available Tickets</label>
+                <label style="font-family: Comic Sans MS;" for="available_tickets">Available Tickets</label>
                 <input type="number" class="form-control" id="available_tickets" name="available_tickets[]" required>
               </div>
             </div>
           </div>
-          <button type="button" class="btn btn-secondary" id="add-ticket">Add Another Ticket Type</button>
+          <button style="font-family: Comic Sans MS;" type="button" class="btn btn-secondary" id="add-ticket">Add Another Ticket Type</button>
         </form>
       </div>
       <div class="modal-footer">
@@ -240,42 +257,40 @@
     <div class="modal-content">
       <div class="modal-header">
         <h5 class="modal-title" id="modifyModalLabel">Modify Event</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">×</span>
-        </button>
+        
       </div>
       <div class="modal-body">
         <form id="modify-form">
           <div class="form-group">
-            <label for="modify-name">Event Name</label>
+            <label style="font-family: Comic Sans MS;" for="modify-name">Event Name</label>
             <input type="text" class="form-control" id="modify-name" name="name">
           </div>
           <div class="form-group">
-            <label for="modify-venue">Venue</label>
+            <label style="font-family: Comic Sans MS;" for="modify-venue">Venue</label>
             <input type="text" class="form-control" id="modify-venue" name="venue">
           </div>
           <div class="form-group">
-            <label for="modify-date">Date and Time</label>
+            <label style="font-family: Comic Sans MS;" for="modify-date">Date and Time</label>
             <input type="datetime-local" class="form-control" id="modify-date" name="date">
           </div>
           <div class="form-group">
-            <label for="modify-end">End Date and Time</label>
+            <label style="font-family: Comic Sans MS;" for="modify-end">End Date and Time</label>
             <input type="datetime-local" class="form-control" id="modify-end" name="end">
           </div>
           <div class="form-group">
-            <label for="modify-description">Description</label>
+            <label style="font-family: Comic Sans MS;" for="modify-description">Description</label>
             <textarea class="form-control" id="modify-description" name="description"></textarea>
           </div>
           <div class="form-group">
-            <label for="modify-moredetails">More Details</label>
+            <label style="font-family: Comic Sans MS;" for="modify-moredetails">More Details</label>
             <textarea class="form-control" id="modify-moredetails" name="moredetails"></textarea>
           </div>
           <div id="modify-tickets" class="form-group">
-            <label>Tickets</label>
+            <label style="font-family: Comic Sans MS;" >Tickets</label>
             <!-- Tickets will be added here by JavaScript -->
           </div>
           <div>
-          <br><button type="button" id="add-ticket" class="btn btn-secondary">Add Ticket</button>
+          <br><button type="button" style="font-family: Comic Sans MS;" id="add-ticket" class="btn btn-secondary">Add Ticket</button>
         </div>
         </form>
       </div>
