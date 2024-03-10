@@ -40,7 +40,7 @@
             border-radius: 15px;
             padding: 10px;
             transition: all 0.3s ease;
-            margin: 20px; /* Increased the margin between tiles */
+            margin: 30px; /* Increased the margin between tiles */
             width: 100%; /* Adjusted tile width */
         }
         .tile:hover {
@@ -115,7 +115,7 @@
                                 </div>
                                 <div class="button-container">
                                     <form method="POST" action="{{ url_for('delete_review', review_id=review.id) }}">
-                                        <button type="submit" class="btn btn-danger">Delete</button>
+                                        <button type="submit" class="btn btn-danger">Delete My Review</button>
                                     </form>
                                 </div>
                             </div>
