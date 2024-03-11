@@ -58,7 +58,7 @@ class User(UserMixin,db.Model):
     email = db.Column(db.String(100), unique=True, nullable=False)
     password = db.Column(db.String(1000), nullable=False)
     registeredon=db.Column(db.DateTime, default=datetime.utcnow)
-
+    
     bookings = db.relationship('Booking', backref='user', lazy=True, cascade="all, delete-orphan")
     reviews = db.relationship('Review', backref='user', lazy=True, cascade="all, delete-orphan")
     def get_id(self):
@@ -290,8 +290,6 @@ def cancel_booking(booking_id):
 
     # Redirect the user to the bookings page
     return redirect(url_for('user_booking'))
-
-
 
 
 
